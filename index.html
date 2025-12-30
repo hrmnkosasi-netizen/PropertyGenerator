@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AgentPro v9.10 - Perfect Ghost Watermark</title>
+    <title>AgentPro v9.12 - Unlimited Ideas</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -48,6 +48,39 @@
         input:focus, select:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,0,0, 0.1); }
         
         .hidden-input { display: none; }
+
+        /* AI BUTTON & MODAL */
+        .btn-ai-gen {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white; border: none; padding: 8px 12px; border-radius: 8px;
+            font-size: 0.75rem; font-weight: 700; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+            transition: transform 0.2s;
+            margin-top: 5px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-ai-gen:active { transform: scale(0.95); }
+        
+        #aiModal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 150;
+            display: none; align-items: flex-end; justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+        .ai-content {
+            background: #fff; width: 100%; max-width: 480px;
+            border-radius: 20px 20px 0 0; padding: 20px;
+            animation: slideUp 0.3s;
+        }
+        .ai-option {
+            background: #f3f4f6; padding: 12px; border-radius: 10px;
+            margin-bottom: 10px; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; border: 1px solid transparent; transition: 0.2s;
+            line-height: 1.3; color:#333;
+        }
+        .ai-option:hover { background: #e0e7ff; border-color: #6366f1; color: #4338ca; }
+        .ai-title { font-weight: 800; font-size: 1rem; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
 
         /* MULTI IMAGE UPLOAD GRID */
         .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
@@ -132,26 +165,15 @@
             z-index: 15; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;
         }
 
-        /* --- WATERMARK "GHOST" TRANSPARAN --- */
+        /* --- WATERMARK 0.25 OPACITY --- */
         .watermark { 
-            position: absolute; 
-            inset: 0; 
-            display: none; 
-            align-items: center; 
-            justify-content: center; 
-            pointer-events: none; 
-            z-index: 10; 
-            /* PERBAIKAN UTAMA: Opacity diturunkan drastis */
-            opacity: 0.25; 
+            position: absolute; inset: 0; display: none; align-items: center; justify-content: center; 
+            pointer-events: none; z-index: 10; 
+            opacity: 0.25; /* UPDATED OPACITY */
         }
         .watermark span { 
-            font-size: 2.2rem; 
-            font-weight: 800; 
-            color: #ffffff;
-            letter-spacing: 0px; 
-            /* Bayangan sedikit diperkuat agar tetap terbaca walau transparan */
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-size: 2.2rem; font-weight: 800; color: #ffffff; letter-spacing: 0px; 
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-family: 'Plus Jakarta Sans', sans-serif; 
         }
 
         /* INFO AREA LAYOUT */
@@ -225,6 +247,16 @@
 </head>
 <body>
 
+<div id="aiModal" onclick="closeAIModal(event)">
+    <div class="ai-content" onclick="event.stopPropagation()">
+        <div class="ai-title">
+            <span>✨ Pilih Judul AI (Random)</span>
+            <span onclick="closeAIModal(event)" style="cursor:pointer; font-size:1.5rem;">&times;</span>
+        </div>
+        <div id="aiList"></div>
+    </div>
+</div>
+
 <div id="loadingOverlay">
     <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
     <div style="font-weight: 600;">Memproses HD...</div>
@@ -232,7 +264,7 @@
 
 <div class="mobile-frame">
     <div class="header">
-        <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v9.10 Ghost Mark</span></h1>
+        <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v9.12 Random AI</span></h1>
         <button class="btn-reset" onclick="resetData()"><i class="fas fa-trash-alt"></i></button>
     </div>
     <div id="toast" class="toast"><i class="fas fa-check-circle" style="color:var(--primary)"></i> Tersimpan</div>
@@ -337,7 +369,13 @@
                 </div>
 
                 <div class="form-group"><label style="color:#ef4444;">Harga Coret (Hanya utk Jual)</label><input type="text" id="hargaCoret" placeholder="Opsional" oninput="renderAll()" style="background:#fef2f2; color:#ef4444;"></div>
-                <div class="form-group"><label>Judul Headline</label><input type="text" id="judul" value="RUMAH MEWAH HOOK LOKASI STRATEGIS" oninput="renderAll()"></div>
+                
+                <div class="form-group">
+                    <label>Judul Headline</label>
+                    <input type="text" id="judul" value="RUMAH MEWAH HOOK LOKASI STRATEGIS" oninput="renderAll()">
+                    <button class="btn-ai-gen" onclick="openAIHeadlines()"><i class="fas fa-magic"></i> Buat Judul Otomatis (AI)</button>
+                </div>
+
                 <div class="form-group"><label>Lokasi</label><input type="text" id="lokasi" value="BSD City, Tangerang" oninput="renderAll()"></div>
             </div>
 
@@ -760,6 +798,67 @@
 
         generateQR(); // Debounced
         generateCaption();
+    }
+
+    /* --- RANDOM AI HEADLINE LOGIC --- */
+    function openAIHeadlines() {
+        const val = (id) => document.getElementById(id).value;
+        const tipe = val('tipeProp').toUpperCase();
+        const loc = val('lokasi').toUpperCase().split(',')[0]; // Take only city
+        const harga = val('hargaJual');
+        const specs = `${val('lt')}m²`;
+        
+        // LARGE POOL OF TEMPLATES (15+)
+        const templates = [
+            `DIJUAL CEPAT! ${tipe} DI ${loc} HANYA ${harga}`,
+            `${tipe} MEWAH SIAP HUNI DI ${loc}, LT ${specs}`,
+            `INVESTASI TERBAIK! ${tipe} STRATEGIS DI JANTUNG ${loc}`,
+            `TERMURAH DI KELASNYA! ${tipe} ${loc} JARANG ADA`,
+            `BUC! ${tipe} ${loc} HARGA MIRING ${harga} NEGO`,
+            `${tipe} CANTIK TERAWAT DI ${loc}, LINGKUNGAN ASRI`,
+            `HITUNG TANAH SAJA! ${tipe} ${loc} POSISI HOOK`,
+            `LANGKA! ${tipe} ${loc} HARGA NEGO SAMPAI JADI`,
+            `DEKAT AKSES TOL! ${tipe} ${loc} BEBAS BANJIR`,
+            `${tipe} MODERN MINIMALIS DI ${loc} SIAP HUNI`,
+            `TURUN HARGA! ${tipe} ${loc} DARI PEMILIK LANGSUNG`,
+            `${tipe} BARU GRESS DI ${loc} - ${harga} SAJA!`,
+            `HOT DEAL! ${tipe} ${loc} LOKASI PREMIUM`,
+            `JUAL BUTUH! ${tipe} ${loc} DIBAWAH PASAR`,
+            `${tipe} 2 LANTAI DI ${loc}, DESIGN MEWAH`
+        ];
+
+        // SHUFFLE ALGORITHM (Fisher-Yates)
+        for (let i = templates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [templates[i], templates[j]] = [templates[j], templates[i]];
+        }
+
+        // PICK TOP 3
+        const selectedOptions = templates.slice(0, 3);
+
+        const list = document.getElementById('aiList');
+        list.innerHTML = ''; // Clear old options
+        
+        selectedOptions.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'ai-option';
+            div.innerText = opt;
+            div.onclick = () => selectAIHeadline(opt);
+            list.appendChild(div);
+        });
+
+        document.getElementById('aiModal').style.display = 'flex';
+    }
+
+    function selectAIHeadline(text) {
+        document.getElementById('judul').value = text;
+        renderAll();
+        closeAIModal();
+    }
+
+    function closeAIModal(e) {
+        if(e) e.stopPropagation();
+        document.getElementById('aiModal').style.display = 'none';
     }
 
     // Debounced QR Generator
