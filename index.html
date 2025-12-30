@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AgentPro v5.1 - Manual Sharp</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* --- CSS UTAMA --- */
+        :root {
+            --primary: #FFD900; 
+            --accent: #111;
+            --text-main: #1f2937; 
+            --text-muted: #6b7280; 
+            --bg-body: #f3f4f6; 
+            --bg-card: #ffffff;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { margin: 0; background: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; height: 100dvh; color: var(--text-main); }
+        
+        .mobile-frame { width: 100%; max-width: 480px; background: var(--bg-body); height: 100%; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.15); }
+        
+        /* HEADER */
+        .header { padding: 12px 15px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; z-index: 50; flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .header h1 { margin: 0; font-size: 1rem; font-weight: 800; color: var(--accent); }
+        .header h1 span { color: #f59e0b; }
+        .btn-reset { border:none; background: #fee2e2; color:#ef4444; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.8rem;}
+
+        /* CONTENT AREA */
+        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 15px; padding-bottom: 90px; }
+        .section { display: none; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .section.active { display: block; }
+        @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+
+        /* CARDS & FORMS */
+        .card { background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .card-head { font-weight: 700; font-size: 0.85rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--accent); padding-bottom: 8px; border-bottom: 1px dashed #e5e7eb; }
+        .form-group { margin-bottom: 10px; }
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; min-width: 0; }
+        label { display: block; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; margin-left: 2px;}
+        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid transparent; border-radius: 10px; font-size: 0.9rem; font-family: inherit; font-weight: 500; background: #f9fafb; color: var(--text-main); transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255, 217, 0, 0.15); }
+
+        /* PREVIEW EDIT BOX */
+        .img-cover { width: 100%; height: 100%; object-fit: cover; }
+        .preview-edit-box { width: 100%; height: 200px; background: #e5e7eb; border-radius: 12px; overflow: hidden; margin-bottom: 15px; position: relative; border: 2px solid #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-overlay { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; gap: 6px; align-items: center; }
+
+        /* POSTER AREA */
+        .preview-container { width: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 10px 0; overflow: hidden; }
+        .poster-scaler { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        
+        #posterCanvas { background: #fff; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+        #posterCanvas.feed { width: 360px; height: 450px; } 
+        #posterCanvas.story { width: 320px; height: 568px; }
+
+        /* PROPERTY IMAGE CONTAINER - MANUAL FIT SYSTEM */
+        .canvas-img-area { 
+            position: relative; 
+            width: 100%; 
+            overflow: hidden; /* Penting: Potong gambar yg keluar */
+            background: #eee; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #posterCanvas.feed .canvas-img-area { height: 72%; } 
+        #posterCanvas.story .canvas-img-area { height: 76%; }
+        
+        /* Gambar Utama di Canvas - Tanpa Object Fit CSS, tapi JS Manual */
+        #bgDisplay {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%); /* Center gambar */
+            /* Ukuran width/height akan diatur oleh JS 'manualFit' */
+        }
+
+        /* Watermark */
+        .watermark { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; opacity: 0.25; transform: rotate(-15deg); z-index: 10; }
+        .watermark span { font-size: 3rem; font-weight: 900; color: #fff; border: 4px solid #fff; padding: 10px 20px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+        /* INFO AREA LAYOUT */
+        .canvas-info-area { flex: 1; background: #fff; padding: 12px 15px; display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 20; }
+        .price-badge-container { position: absolute; top: 0; left: 0; transform: translateY(-100%); display: flex; flex-direction: column; z-index: 20; }
+        .price-strike { align-self: flex-start; background: #ef4444; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; margin-left: 15px; border-radius: 4px 4px 0 0; text-decoration: line-through; display: none; margin-bottom: -1px;}
+        
+        .main-tag-group { display: flex; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tag-yellow { background: var(--primary); color: #000; font-weight: 800; padding: 8px 12px; font-size: 0.8rem; text-transform: uppercase; }
+        .tag-white { background: #fff; color: #000; font-weight: 800; padding: 8px 12px; font-size: 1rem; letter-spacing: -0.5px; border-radius: 0 6px 0 0; }
+
+        /* TEXT STYLES */
+        .prop-indicator { font-size: 0.65rem; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
+        .info-title { font-weight: 900; font-size: 1rem; line-height: 1.1; text-transform: uppercase; color: #111; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .info-loc { font-size: 0.7rem; color: #666; display: flex; gap: 4px; align-items: center; font-weight: 500; margin-bottom: 8px;}
+        
+        /* SPECS GRID */
+        .specs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px 0; padding: 6px 0; margin: 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+        .spec-box { text-align: center; border-right: 1px solid #eee; padding: 2px 0; }
+        .spec-box:nth-child(4n) { border-right: none; }
+        .spec-val { font-weight: 800; font-size: 0.75rem; color: #222; display:flex; justify-content:center; gap:3px; align-items:center; }
+        .spec-val i { font-size: 0.6rem; color: #999; }
+        .spec-label { font-size: 0.5rem; color: #888; text-transform: uppercase; font-weight: 600; margin-top: 1px; letter-spacing: -0.2px; }
+
+        /* AGENT BAR */
+        .agent-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
+        .agent-profile { display: flex; align-items: center; gap: 8px; flex: 1; overflow: hidden; }
+        .agent-pic-box { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--primary); flex-shrink: 0; overflow: hidden; background: #eee; }
+        .agent-text h4 { margin: 0; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; line-height: 1.1; }
+        .agent-text p { margin: 1px 0 0 0; font-size: 0.6rem; color: #666; }
+        .agent-phone { font-size: 0.7rem; color: #111; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-top: 1px; }
+        .agent-phone i { color: #25D366; }
+        .qr-wrapper { width: 38px; height: 38px; padding: 2px; border: 1px solid #eee; border-radius: 4px; background:#fff; flex-shrink: 0;}
+        .qr-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* NAVIGATION & UI */
+        .nav-bar { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; border-top: 1px solid #eee; display: flex; z-index: 40; padding-bottom: 10px; }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: #9ca3af; cursor: pointer; transition: 0.2s; font-weight: 600; }
+        .nav-btn.active { color: #111; }
+        .nav-btn.active i { color: var(--primary); transform: translateY(-2px); }
+        .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
+        
+        .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); transition: 0.2s; }
+        .segment-control { display: flex; background: #e5e7eb; padding: 3px; border-radius: 10px; margin-bottom: 15px; }
+        .segment-btn { flex: 1; padding: 8px; text-align: center; border: none; background: transparent; font-weight: 600; font-size: 0.8rem; cursor: pointer; border-radius: 8px; color: #666; transition: 0.2s; }
+        .segment-btn.active { background: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #111; color: #fff; padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; opacity: 0; transition: 0.4s; z-index: 100; pointer-events: none; display: flex; align-items: center; gap: 8px; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* LOADING OVERLAY */
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 200;
+            display: none; justify-content: center; align-items: center; flex-direction: column; color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+    <div style="font-weight: 600;">Memproses HD...</div>
+</div>
+
+<div class="mobile-frame">
+    <div class="header">
+        <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v5.1 Manual Fix</span></h1>
+        <button class="btn-reset" onclick="resetData()"><i class="fas fa-trash-alt"></i></button>
+    </div>
+    <div id="toast" class="toast"><i class="fas fa-check-circle" style="color:var(--primary)"></i> Tersimpan</div>
+
+    <div class="content">
+        
+        <div id="tab-edit" class="section active">
+            <div class="card" style="padding:0; overflow:hidden; border:none;">
+                <div class="preview-edit-box" onclick="document.getElementById('fileBg').click()" style="margin-bottom:0; border-radius:0;">
+                    <img id="editPreview" class="img-cover" src="https://images.unsplash.com/photo-1600596542815-e328d4de4bf7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" crossorigin="anonymous">
+                    <div class="btn-overlay"><i class="fas fa-camera"></i> Ganti Foto</div>
+                    <input type="file" id="fileBg" hidden accept="image/*" onchange="loadImg(event)">
+                </div>
+                <div style="padding:15px;">
+                    <label>Kecerahan Foto</label>
+                    <input type="range" style="width:100%; accent-color:var(--primary);" min="50" max="150" value="100" oninput="adjustBrightness(this.value)">
+                    <div style="display:flex; gap:15px; margin-top:15px; padding-top:15px; border-top:1px dashed #eee;">
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#333;"><input type="checkbox" id="checkWatermark" checked style="width:auto;"> 🛡️ Watermark</label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#333;"><input type="checkbox" id="checkQR" checked onchange="renderAll()" style="width:auto;"> QR Code</label>
+                    </div>
+                    <div class="form-group" style="margin-top:10px;"><label>Teks Watermark</label><input type="text" id="wmCustomText" placeholder="Default: Nama Kantor" oninput="renderAll()"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><i class="fas fa-home"></i> Detail Properti</div>
+                <div class="form-group">
+                    <label>Jenis Properti</label>
+                    <select id="tipeProp" onchange="renderAll()">
+                        <option value="RUMAH">RUMAH</option>
+                        <option value="RUKO">RUKO</option>
+                        <option value="TANAH">TANAH</option>
+                        <option value="APARTEMEN">APARTEMEN</option>
+                        <option value="GUDANG">GUDANG</option>
+                        <option value="KANTOR">KANTOR</option>
+                        <option value="VILLA">VILLA</option>
+                    </select>
+                </div>
+                <div class="row form-group">
+                    <div class="col"><label>Status</label><select id="status" onchange="renderAll()"><option>DIJUAL</option><option>DISEWA</option></select></div>
+                    <div class="col"><label>Harga</label><input type="text" id="harga" value="RP 4.5 M" oninput="renderAll()" style="font-weight:700;"></div>
+                </div>
+                <div class="form-group"><label style="color:#ef4444;">Harga Coret</label><input type="text" id="hargaCoret" placeholder="Opsional" oninput="renderAll()" style="background:#fef2f2; color:#ef4444;"></div>
+                <div class="form-group"><label>Judul Headline</label><input type="text" id="judul" value="RUMAH MEWAH HOOK" oninput="renderAll()"></div>
+                <div class="form-group"><label>Lokasi</label><input type="text" id="lokasi" value="BSD City, Tangerang" oninput="renderAll()"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><i class="fas fa-sliders-h"></i> Spesifikasi</div>
+                <div class="row form-group">
+                    <div class="col"><label>LT (m²)</label><input type="number" id="lt" value="160" oninput="renderAll()"></div>
+                    <div class="col"><label>LB (m²)</label><input type="number" id="lb" value="220" oninput="renderAll()"></div>
+                    <div class="col"><label>KT</label><input type="number" id="kt" value="4" oninput="renderAll()"></div>
+                    <div class="col"><label>KM</label><input type="number" id="km" value="3" oninput="renderAll()"></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col"><label>Legal</label><select id="legal" onchange="renderAll()"><option value="SHM">SHM</option><option value="HGB">HGB</option><option value="AJB">AJB</option><option value="PPJB">PPJB</option></select></div>
+                    <div class="col"><label>Watt</label><input type="text" id="listrik" value="3500" oninput="renderAll()"></div>
+                </div>
+                <div class="row form-group">
+                    <div class="col"><label>Hadap</label><select id="hadap" onchange="renderAll()"><option>Utara</option><option>Selatan</option><option>Timur</option><option>Barat</option><option>Utr-Tmr</option><option>Utr-Brt</option><option>Slt-Tmr</option><option>Slt-Brt</option></select></div>
+                    <div class="col"><label>Air</label><input type="text" id="air" value="PDAM" oninput="renderAll()"></div>
+                </div>
+                 <div class="form-group"><label>Poin Plus</label><textarea id="poin" rows="2">Siap huni, bebas banjir, keamanan 24 jam</textarea></div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><i class="fas fa-user-circle"></i> Profil Agen</div>
+                <div class="row">
+                     <div class="col" style="flex:0.3">
+                         <div style="width:100%; aspect-ratio:1; background:#f3f4f6; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:1px dashed #ccc; overflow:hidden;" onclick="document.getElementById('fileAg').click()">
+                            <img id="agEditPreview" class="img-cover" src="https://randomuser.me/api/portraits/men/32.jpg" crossorigin="anonymous">
+                         </div>
+                         <input type="file" id="fileAg" hidden accept="image/*" onchange="loadAgentImg(event)">
+                     </div>
+                     <div class="col">
+                         <div class="form-group" style="margin-bottom:8px;"><label>Nama</label><input type="text" id="nama" value="Herman Kosasi" oninput="renderAll()"></div>
+                         <div class="form-group" style="margin-bottom:0;"><label>WhatsApp</label><input type="tel" id="hp" value="081234567890" oninput="renderAll()"></div>
+                     </div>
+                </div>
+                <div class="form-group" style="margin-top:10px;"><label>Nama Kantor</label><input type="text" id="kantor" value="Brighton Titanium PIK" oninput="renderAll()"></div>
+            </div>
+        </div>
+
+        <div id="tab-poster" class="section">
+            <div class="segment-control">
+                <button class="segment-btn active" id="btnFeed" onclick="setMode('feed')">Feed (4:5)</button>
+                <button class="segment-btn" id="btnStory" onclick="setMode('story')">Story (9:16)</button>
+            </div>
+
+            <div class="preview-container" id="previewContainer">
+                <div class="poster-scaler" id="posterScaler">
+                    <div id="posterCanvas" class="feed">
+                        
+                        <div class="canvas-img-area" id="imgArea">
+                            <img id="bgDisplay" src="https://images.unsplash.com/photo-1600596542815-e328d4de4bf7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" crossorigin="anonymous" onload="manualFit()">
+                            <div class="watermark" id="watermarkLayer"><span id="wmTextDisplay">BRIGHTON</span></div>
+                        </div>
+
+                        <div class="canvas-info-area">
+                            <div class="price-badge-container">
+                                <div class="price-strike" id="strikePriceDisplay">RP 5.5 M</div>
+                                <div class="main-tag-group">
+                                    <div class="tag-yellow" id="o_status">DIJUAL</div>
+                                    <div class="tag-white" id="o_harga">RP 4.5 M</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="prop-indicator" id="o_tipe_display">RUMAH</div>
+                                <div class="info-title" id="o_judul">RUMAH MEWAH HOOK</div>
+                                <div class="info-loc"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> <span id="o_lokasi">BSD City</span></div>
+                                <div class="specs-grid">
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-expand"></i> <span id="o_lt">160</span></div><div class="spec-label">LT</div></div>
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-home"></i> <span id="o_lb">220</span></div><div class="spec-label">LB</div></div>
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-bed"></i> <span id="o_kt">4</span></div><div class="spec-label">KT</div></div>
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-bath"></i> <span id="o_km">3</span></div><div class="spec-label">KM</div></div>
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-file-contract"></i> <span id="o_legal">SHM</span></div><div class="spec-label">Legal</div></div>
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-bolt"></i> <span id="o_listrik">3500</span></div><div class="spec-label">Watt</div></div>
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-tint"></i> <span id="o_air">PAM</span></div><div class="spec-label">Air</div></div>
+                                    <div class="spec-box"><div class="spec-val"><i class="fas fa-compass"></i> <span id="o_hadap">Utara</span></div><div class="spec-label">Hadap</div></div>
+                                </div>
+                            </div>
+
+                            <div class="agent-bar">
+                                <div class="agent-profile">
+                                    <div class="agent-pic-box">
+                                        <img id="agDisplay" class="img-cover" src="https://randomuser.me/api/portraits/men/32.jpg" crossorigin="anonymous">
+                                    </div>
+                                    <div class="agent-text">
+                                        <h4 id="o_nama">HERMAN KOSASI</h4>
+                                        <p id="o_kontak">Brighton Titanium PIK</p>
+                                        <span id="o_hp_display" class="agent-phone"><i class="fab fa-whatsapp"></i> 081234567890</span>
+                                    </div>
+                                </div>
+                                <div class="qr-wrapper" id="qrBox"><img id="qrImage" src="" alt="QR"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-action" onclick="downloadPoster()"><i class="fas fa-download"></i> Download HD Poster</button>
+        </div>
+
+        <div id="tab-caption" class="section">
+            <div class="card">
+                <div class="card-head"><i class="fas fa-align-left"></i> Caption Instagram</div>
+                <textarea id="finalCaption" rows="12" readonly style="background:#fff; border:1px solid #eee;"></textarea>
+                <button onclick="copyCaption()" class="btn-action" style="margin-top:15px; background:#333; font-size:0.8rem; padding:10px;"><i class="fas fa-copy"></i> Salin Teks</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-btn active" onclick="nav('edit', this)"><i class="fas fa-pen-nib"></i> Edit</div>
+        <div class="nav-btn" onclick="nav('poster', this)"><i class="fas fa-image"></i> Poster</div>
+        <div class="nav-btn" onclick="nav('caption', this)"><i class="fas fa-align-left"></i> Caption</div>
+    </div>
+</div>
+
+<script>
+    let currentMode = 'feed';
+    window.onload = function() { loadProfile(); renderAll(); autoScale(); setTimeout(manualFit, 500); };
+    window.onresize = () => { autoScale(); manualFit(); };
+
+    /* --- MANUAL OBJECT FIT LOGIC (KUNCI AGAR TIDAK GEPENG & TETAP TAJAM) --- */
+    function manualFit() {
+        const container = document.getElementById('imgArea');
+        const img = document.getElementById('bgDisplay');
+        if(!img.complete) return; // Tunggu gambar load
+
+        const cRatio = container.offsetWidth / container.offsetHeight;
+        const iRatio = img.naturalWidth / img.naturalHeight;
+
+        if (iRatio > cRatio) {
+            // Gambar lebih lebar dari container -> Tinggi 100%, Lebar Auto
+            img.style.width = 'auto';
+            img.style.height = '100%';
+        } else {
+            // Gambar lebih tinggi dari container -> Lebar 100%, Tinggi Auto
+            img.style.width = '100%';
+            img.style.height = 'auto';
+        }
+    }
+
+    function renderAll() {
+        const val = (id) => document.getElementById(id).value;
+        localStorage.setItem('agentPro_text', JSON.stringify({ nama: val('nama'), hp: val('hp'), kantor: val('kantor'), wm: val('wmCustomText') }));
+
+        const mapText = (src, dest) => { document.getElementById(dest).innerText = val(src); };
+        mapText('status', 'o_status'); mapText('harga', 'o_harga');
+        mapText('judul', 'o_judul'); mapText('lokasi', 'o_lokasi');
+        mapText('lt', 'o_lt'); mapText('lb', 'o_lb');
+        mapText('kt', 'o_kt'); mapText('km', 'o_km');
+        mapText('legal', 'o_legal'); mapText('listrik', 'o_listrik');
+        mapText('air', 'o_air'); mapText('hadap', 'o_hadap');
+        
+        document.getElementById('o_tipe_display').innerText = val('tipeProp');
+        document.getElementById('o_nama').innerText = val('nama');
+        document.getElementById('o_kontak').innerText = val('kantor');
+        document.getElementById('o_hp_display').innerHTML = '<i class="fab fa-whatsapp"></i> ' + val('hp');
+
+        const oldPrice = val('hargaCoret');
+        const strikeEl = document.getElementById('strikePriceDisplay');
+        if(oldPrice && oldPrice.trim() !== "") { strikeEl.style.display = 'block'; strikeEl.innerText = oldPrice; } else { strikeEl.style.display = 'none'; }
+
+        document.getElementById('watermarkLayer').style.display = 'none'; 
+        document.getElementById('wmTextDisplay').innerText = val('wmCustomText') || val('kantor').split(' ')[0].toUpperCase();
+
+        const showQR = document.getElementById('checkQR').checked;
+        const qrBox = document.getElementById('qrBox');
+        if(showQR && val('hp')) {
+            qrBox.style.display = 'block';
+            let cleanHP = val('hp').replace(/[^0-9]/g, '');
+            if(cleanHP.startsWith('0')) cleanHP = '62' + cleanHP.substring(1);
+            document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://wa.me/${cleanHP}`;
+        } else { qrBox.style.display = 'none'; }
+
+        generateCaption();
+    }
+
+    function generateCaption() {
+        const val = (id) => document.getElementById(id).value;
+        let c = `🔥 ${val('tipeProp')} ${val('judul').toUpperCase()} 🔥\n\n`;
+        if(val('hargaCoret')) c += `‼️ TURUN HARGA DARI ${val('hargaCoret')} ‼️\n`;
+        c += `Lokasi: ${val('lokasi')}\n💰 HARGA: ${val('harga')}\n\n`;
+        c += `SPESIFIKASI:\n📐 LT: ${val('lt')}m² | LB: ${val('lb')}m²\n🛏 KT: ${val('kt')} | 🚿 KM: ${val('km')}\n`;
+        c += `📜 ${val('legal')} | 🧭 ${val('hadap')}\n⚡ ${val('listrik')}W | 💧 ${val('air')}\n\n`;
+        if(val('poin')) c += `✨ HIGHLIGHT:\n${val('poin')}\n\n`;
+        c += `INFO LEBIH LANJUT:\n👤 ${val('nama')}\n📞 ${val('hp')}\n🏢 ${val('kantor')}\n\n#properti #rumahdijual #realestate`;
+        document.getElementById('finalCaption').value = c;
+    }
+
+    function loadImg(e) { 
+        const f = e.target.files[0]; 
+        if(f) { const r = new FileReader(); r.onload = (ev) => { 
+            const res = ev.target.result;
+            document.getElementById('editPreview').src = res; 
+            document.getElementById('bgDisplay').src = res; 
+            setTimeout(manualFit, 100); // Recalculate size
+        }; r.readAsDataURL(f); } 
+    }
+    
+    function loadAgentImg(e) { 
+        const f = e.target.files[0]; 
+        if(f) { const r = new FileReader(); r.onload = (ev) => { 
+            const res = ev.target.result;
+            document.getElementById('agEditPreview').src = res; 
+            document.getElementById('agDisplay').src = res; 
+            try { localStorage.setItem('agentPro_img', res); } catch(err) {} 
+        }; r.readAsDataURL(f); } 
+    }
+
+    function loadProfile() { 
+        const savedTxt = localStorage.getItem('agentPro_text'); 
+        if(savedTxt) { const d = JSON.parse(savedTxt); if(d.nama) document.getElementById('nama').value = d.nama; if(d.hp) document.getElementById('hp').value = d.hp; if(d.kantor) document.getElementById('kantor').value = d.kantor; if(d.wm) document.getElementById('wmCustomText').value = d.wm; } 
+        const savedImg = localStorage.getItem('agentPro_img'); if(savedImg) { 
+            document.getElementById('agEditPreview').src = savedImg; 
+            document.getElementById('agDisplay').src = savedImg; 
+        } 
+    }
+
+    function adjustBrightness(val) { 
+        document.getElementById('editPreview').style.filter = `brightness(${val}%)`; 
+        document.getElementById('bgDisplay').style.filter = `brightness(${val}%)`; 
+    }
+
+    function autoScale() { 
+        const c = document.getElementById('previewContainer'); 
+        const s = document.getElementById('posterScaler'); 
+        const cv = document.getElementById('posterCanvas'); 
+        const sc = (c.offsetWidth - 30) / cv.offsetWidth; 
+        s.style.transform = `scale(${sc > 1 ? 1 : sc})`; 
+        c.style.marginBottom = `-${cv.offsetHeight * (1 - (sc > 1 ? 1 : sc))}px`; 
+    }
+    
+    function setMode(m) { 
+        document.getElementById('posterCanvas').className = m; 
+        document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); 
+        document.getElementById(m === 'feed' ? 'btnFeed' : 'btnStory').classList.add('active'); 
+        setTimeout(() => { autoScale(); manualFit(); }, 100); 
+    }
+
+    function nav(t, el) { 
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
+        document.getElementById('tab-'+t).classList.add('active'); 
+        document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active')); 
+        el.classList.add('active'); 
+        if(t === 'poster') setTimeout(() => { autoScale(); manualFit(); }, 200); 
+    }
+
+    function resetData() { 
+        if(confirm("Hapus semua data?")) { localStorage.clear(); location.reload(); } 
+    }
+    
+    function copyCaption() { 
+        const t = document.getElementById('finalCaption'); 
+        t.select(); 
+        navigator.clipboard.writeText(t.value).then(() => alert("Caption tersalin!")); 
+    }
+
+    /* --- DOWNLOAD LOGIC ULTRA SHARP --- */
+    function downloadPoster() {
+        const scaler = document.getElementById('posterScaler');
+        const overlay = document.getElementById('loadingOverlay');
+        const wm = document.getElementById('watermarkLayer');
+        const check = document.getElementById('checkWatermark').checked;
+        const img = document.getElementById('bgDisplay');
+        const origT = scaler.style.transform;
+        
+        // Simpan filter brightness saat ini
+        const currentFilter = img.style.filter;
+
+        overlay.style.display = 'flex';
+        scaler.style.transform = 'none'; // Reset scale
+        if(check) wm.style.display = 'flex';
+        
+        // PENTING: Matikan filter sesaat agar render lebih tajam (opsional, tapi disarankan)
+        // Jika filter hidup, html2canvas kadang merender versi resolusi rendah.
+        // img.style.filter = 'none'; 
+
+        setTimeout(() => {
+            html2canvas(document.getElementById('posterCanvas'), { 
+                scale: 4, // Scale 4 sudah sangat tajam untuk img tag
+                useCORS: true, 
+                allowTaint: true,
+                backgroundColor: null 
+            })
+            .then(canvas => {
+                scaler.style.transform = origT; 
+                wm.style.display = 'none';
+                img.style.filter = currentFilter; // Kembalikan filter
+                overlay.style.display = 'none';
+
+                const link = document.createElement('a');
+                link.download = `AgentPro-${document.getElementById('judul').value}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+            }).catch(e => { 
+                alert("Gagal render."); 
+                scaler.style.transform = origT; 
+                img.style.filter = currentFilter;
+                wm.style.display = 'none';
+                overlay.style.display = 'none';
+            });
+        }, 500); 
+    }
+</script>
+</body>
+</html>
