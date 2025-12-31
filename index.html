@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AgentPro v9.20 - Luxury & Share</title>
+    <title>AgentPro v17.0 - Ultimate Stable</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -12,31 +12,34 @@
     <style>
         /* --- CSS UTAMA --- */
         :root {
-            --primary: #FFD900; 
-            --text-on-primary: #000000;
-            --accent: #111;
-            --text-main: #1f2937; 
-            --text-muted: #6b7280; 
-            --bg-body: #f3f4f6; 
-            --bg-card: #ffffff;
-            
-            /* Luxury Theme Var */
-            --lux-bg: #121212;
-            --lux-gold: #d4af37;
-            --lux-text: #f3f4f6;
+            --primary: #FFD900; --text-on-primary: #000000; --accent: #111;
+            --text-main: #1f2937; --bg-body: #f3f4f6; --bg-card: #ffffff;
+            --lux-bg: #121212; --lux-gold: #d4af37; --lux-text: #f3f4f6;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin: 0; background: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; height: 100dvh; color: var(--text-main); }
-        
         .mobile-frame { width: 100%; max-width: 480px; background: var(--bg-body); height: 100%; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.15); }
         
         /* HEADER */
-        .header { padding: 12px 15px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; z-index: 50; flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .header h1 { margin: 0; font-size: 1rem; font-weight: 800; color: var(--accent); }
+        .header { padding: 12px 15px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; z-index: 50; flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .header-left { display: flex; flex-direction: column; }
+        .header h1 { margin: 0; font-size: 1rem; font-weight: 800; color: var(--accent); line-height: 1; }
         .header h1 span { color: var(--primary); }
-        .btn-reset { border:none; background: #fee2e2; color:#ef4444; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.8rem;}
+        .user-greet { font-size: 0.7rem; color: #166534; font-weight: 700; cursor: pointer; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+        
+        .btn-group-head { display: flex; align-items: center; gap: 8px; }
+        .btn-reset { border:none; background: #fee2e2; color:#ef4444; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.9rem;}
+        .btn-lic { background: #fef3c7; color: #d97706; }
+        
+        .btn-buy-pro { 
+            background: #25D366; color: white; border: none; padding: 6px 12px; 
+            border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
+            animation: pulse 2s infinite; text-decoration: none;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* CONTENT AREA */
+        /* CONTENT */
         .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 15px; padding-bottom: 90px; }
         .section { display: none; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .section.active { display: block; }
@@ -51,272 +54,143 @@
         label { display: block; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; margin-left: 2px;}
         input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid transparent; border-radius: 10px; font-size: 0.9rem; font-family: inherit; font-weight: 500; background: #f9fafb; color: var(--text-main); transition: 0.2s; }
         input:focus, select:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,0,0, 0.1); }
-        
         .hidden-input { display: none; }
-
-        /* AI BUTTON & MODAL */
-        .btn-ai-gen {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white; border: none; padding: 8px 12px; border-radius: 8px;
-            font-size: 0.75rem; font-weight: 700; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 6px;
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
-            transition: transform 0.2s;
-            margin-top: 5px;
-            width: 100%;
-            justify-content: center;
-        }
-        .btn-ai-gen:active { transform: scale(0.95); }
         
-        #aiModal, #projectModal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 150;
-            display: none; align-items: flex-end; justify-content: center;
-            backdrop-filter: blur(2px);
+        .pro-locked { position: relative; opacity: 0.6; pointer-events: none; filter: grayscale(1); }
+        .input-group-locked { position: relative; }
+        .lock-icon { position: absolute; right: 10px; top: 35px; color: #d97706; font-size: 0.9rem; z-index: 10; background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #eee; }
+
+        /* MODALS */
+        #aiModal, #projectModal, #buyModal, #paymentModal, #userProfileModal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 250;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(3px); padding: 20px; overflow-y: auto;
         }
-        #projectModal { z-index: 250; }
+        #projectModal { z-index: 260; }
 
         .ai-content {
-            background: #fff; width: 100%; max-width: 480px;
-            border-radius: 20px 20px 0 0; padding: 20px;
-            animation: slideUp 0.3s;
+            background: #fff; width: 100%; max-width: 400px;
+            border-radius: 20px; padding: 25px;
+            animation: zoomIn 0.2s; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-height: 90vh; overflow-y: auto;
         }
-        .ai-option {
-            background: #f3f4f6; padding: 12px; border-radius: 10px;
-            margin-bottom: 10px; font-size: 0.8rem; font-weight: 600;
-            cursor: pointer; border: 1px solid transparent; transition: 0.2s;
-            line-height: 1.3; color:#333;
-        }
-        .ai-option:hover { background: #e0e7ff; border-color: #6366f1; color: #4338ca; }
-        .ai-title { font-weight: 800; font-size: 1rem; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        @keyframes zoomIn { from {transform: scale(0.9); opacity: 0;} to {transform: scale(1); opacity: 1;} }
 
-        /* PROJECT LIST STYLES */
-        .proj-item {
-            background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px; 
-            border-radius: 8px; margin-bottom: 8px; display: flex; 
-            justify-content: space-between; align-items: center;
-        }
-        .proj-info { flex: 1; }
-        .proj-name { font-weight: 700; font-size: 0.85rem; color: #1f2937; }
-        .proj-date { font-size: 0.65rem; color: #6b7280; }
-        .proj-actions { display: flex; gap: 5px; }
-        .btn-sm { 
-            padding: 6px 10px; border-radius: 6px; border: none; 
-            cursor: pointer; font-size: 0.7rem; font-weight: 600; 
-        }
-        .btn-load { background: #dbeafe; color: #2563eb; }
-        .btn-del { background: #fee2e2; color: #ef4444; }
+        .ai-option { background: #f3f4f6; padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; color:#333; }
+        .ai-option:hover { background: #e0e7ff; color: #4338ca; }
+        .ai-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
 
+        /* USER PROFILE */
+        .user-card-info { text-align: center; padding-bottom: 15px; border-bottom: 1px dashed #eee; margin-bottom: 15px; }
+        .uc-avatar { width: 60px; height: 60px; background: #dcfce7; color: #166534; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 10px auto; }
+        .uc-name { font-weight: 800; font-size: 1.1rem; margin-bottom: 2px; }
+        .uc-status { background: #000; color: #FFD900; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; display: inline-block; margin-bottom: 5px; }
+        .uc-exp { font-size: 0.85rem; color: #15803d; font-weight: 600; }
+        .btn-logout { background: #fee2e2; color: #ef4444; width: 100%; padding: 10px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-        /* MULTI IMAGE UPLOAD GRID */
+        /* PAYMENT & ACTIONS */
+        .pay-box { background: #f0fdf4; border: 2px dashed #4ade80; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .pay-rek { font-size: 1.3rem; font-weight: 800; letter-spacing: 1px; color: #15803d; margin: 10px 0; display: block; font-family: monospace; }
+        .copy-btn { background: #fff; border: 1px solid #ddd; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; color: #555; font-weight: 600; }
+        .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-share { background: #059669; margin-left:10px; flex:1; }
+        .btn-ai-gen { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 10px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center; margin-top: 5px; }
+
+        /* UPLOAD GRID */
         .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .upload-box { 
-            aspect-ratio: 4/3; background: #e5e7eb; border-radius: 10px; overflow: hidden; position: relative; 
-            border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-        .upload-box img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .upload-box.has-img img { display: block; }
-        .upload-box.has-img .placeholder { display: none; }
-        .upload-box .placeholder { color: #888; font-size: 0.7rem; text-align: center; }
-        .upload-box .placeholder i { font-size: 1.2rem; display: block; margin-bottom: 4px; }
-        .upload-box .del-btn { 
-            position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.8); color: white; 
-            width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.6rem; z-index: 5;
-        }
-        .upload-box.has-img .del-btn { display: flex; }
-
+        .upload-box { aspect-ratio: 4/3; background: #e5e7eb; border-radius: 12px; overflow: hidden; position: relative; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .upload-box:active { transform: scale(0.98); } .upload-box img { width: 100%; height: 100%; object-fit: cover; display: none; } .upload-box.has-img img { display: block; } .upload-box.has-img .placeholder { display: none; }
+        .upload-box .placeholder { color: #888; font-size: 0.75rem; text-align: center; font-weight: 500; } .upload-box .placeholder i { font-size: 1.5rem; display: block; margin-bottom: 6px; color: #aaa; }
+        .upload-box .del-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: white; width: 24px; height: 24px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.8rem; z-index: 5; } .upload-box.has-img .del-btn { display: flex; }
         .img-cover { width: 100%; height: 100%; object-fit: cover; }
         
-        /* POSTER AREA */
+        /* POSTER CANVAS */
         .preview-container { width: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 10px 0; overflow: hidden; }
-        .poster-scaler { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-        
+        .poster-scaler { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 2px; }
         #posterCanvas { background: #fff; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s; }
-        #posterCanvas.feed { width: 360px; height: 450px; } 
-        #posterCanvas.story { width: 320px; height: 568px; }
-
-        .canvas-img-area { 
-            position: relative; width: 100%; background: #eee; overflow: hidden;
-            display: grid; gap: 2px; background: #fff; transition: background 0.3s;
-        }
-        #posterCanvas.feed .canvas-img-area { height: 70%; }
-        #posterCanvas.story .canvas-img-area { height: 75%; }
-
-        /* GRID VARIANTS */
-        .layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
-        .layout-2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-        .layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 2fr 1fr; }
-        .layout-3 .grid-item:nth-child(1) { grid-column: 1 / 3; } 
-        .layout-4 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 2fr 1fr; }
-        .layout-4 .grid-item:nth-child(1) { grid-column: 1 / 4; } 
-
-        .grid-item { position: relative; overflow: hidden; background: #ddd; }
-        .grid-item img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-
-        /* --- COMPACT PRICE PILL --- */
-        .price-badge-container { 
-            position: absolute; top: 20px; right: 0; z-index: 20; 
-            display: flex; flex-direction: column; align-items: flex-end; gap: 4px; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-            padding-right: 0;
-        }
+        #posterCanvas.feed { width: 360px; height: 450px; } #posterCanvas.story { width: 320px; height: 568px; }
+        .canvas-img-area { position: relative; width: 100%; background: #eee; overflow: hidden; display: grid; gap: 2px; background: #fff; transition: background 0.3s; }
+        #posterCanvas.feed .canvas-img-area { height: 70%; } #posterCanvas.story .canvas-img-area { height: 75%; }
         
-        .price-row {
-            display: flex; align-items: stretch; border-radius: 8px 0 0 8px;
-            overflow: hidden; height: 28px; 
-        }
+        .layout-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; } .layout-2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; } .layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 2fr 1fr; } .layout-3 .grid-item:nth-child(1) { grid-column: 1 / 3; } .layout-4 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 2fr 1fr; } .layout-4 .grid-item:nth-child(1) { grid-column: 1 / 4; } 
+        .grid-item { position: relative; overflow: hidden; background: #ddd; } .grid-item img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        .price-badge-container { position: absolute; top: 20px; right: 0; z-index: 20; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); padding-right: 0; }
+        .price-row { display: flex; align-items: stretch; border-radius: 8px 0 0 8px; overflow: hidden; height: 28px; }
+        .pr-label { background: var(--primary); color: var(--text-on-primary); font-weight: 800; font-size: 0.6rem; padding: 0 8px; display: flex; align-items: center; text-transform: uppercase; } .pr-label.sewa { background: #f3f4f6; color: #111; }
+        .pr-val { background: #fff; color: #000; font-weight: 800; font-size: 0.8rem; padding: 0 10px; display: flex; align-items: center; letter-spacing: -0.5px; }
+        .price-strike { background: #ef4444; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 6px 0 0 6px; text-decoration: line-through; margin-right: 0; margin-bottom: -4px; display: inline-block; }
         
-        .pr-label {
-            background: var(--primary); color: var(--text-on-primary); font-weight: 800;
-            font-size: 0.6rem; padding: 0 8px; display: flex; align-items: center; text-transform: uppercase;
-        }
-        .pr-label.sewa { background: #f3f4f6; color: #111; }
+        .status-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); border: 6px solid #fff; padding: 10px 30px; font-size: 2.5rem; font-weight: 900; color: #fff; background: rgba(220, 38, 38, 0.8); text-transform: uppercase; letter-spacing: 3px; z-index: 15; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; }
+        .watermark { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; pointer-events: none; z-index: 10; opacity: 0.25; }
+        .watermark span { font-size: 2.2rem; font-weight: 800; color: #ffffff; letter-spacing: 0px; text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-family: 'Plus Jakarta Sans', sans-serif; }
 
-        .pr-val {
-            background: #fff; color: #000; font-weight: 800; font-size: 0.8rem;
-            padding: 0 10px; display: flex; align-items: center; letter-spacing: -0.5px;
-        }
-
-        .price-strike { 
-            background: #ef4444; color: #fff; font-size: 0.6rem; font-weight: 700; 
-            padding: 2px 8px; border-radius: 6px 0 0 6px; text-decoration: line-through; 
-            display: none; margin-right: 0; margin-bottom: -4px;
-        }
-
-        /* STATUS BADGE */
-        .status-badge {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
-            border: 6px solid #fff; padding: 10px 30px; font-size: 2.5rem; font-weight: 900;
-            color: #fff; background: rgba(220, 38, 38, 0.8); text-transform: uppercase; letter-spacing: 3px;
-            z-index: 15; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;
-        }
-
-        /* WATERMARK */
-        .watermark { 
-            position: absolute; inset: 0; display: none; align-items: center; justify-content: center; 
-            pointer-events: none; z-index: 10; 
-            opacity: 0.25; 
-        }
-        .watermark span { 
-            font-size: 2.2rem; font-weight: 800; color: #ffffff; letter-spacing: 0px; 
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5); font-family: 'Plus Jakarta Sans', sans-serif; 
-        }
-
-        /* INFO AREA LAYOUT */
         .canvas-info-area { flex: 1; background: #fff; padding: 12px 15px; display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 20; transition: background 0.3s, color 0.3s; }
-        
         .prop-indicator { font-size: 0.65rem; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
-        
-        .info-title { 
-            font-weight: 900; font-size: 1rem; line-height: 1.1; text-transform: uppercase; color: #111; 
-            margin-bottom: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-            transition: color 0.3s;
-        }
-        
+        .info-title { font-weight: 900; font-size: 1rem; line-height: 1.1; text-transform: uppercase; color: #111; margin-bottom: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s; }
         .info-loc { font-size: 0.7rem; color: #666; display: flex; gap: 4px; align-items: center; font-weight: 500; margin-bottom: 8px;}
         
-        /* SPECS GRID */
         .specs-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 0; padding: 6px 0; margin: 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; transition: border-color 0.3s; }
         .spec-box { text-align: center; border-right: 1px solid #eee; padding: 2px 0; display: block; transition: border-color 0.3s;}
-        
-        .spec-val { font-weight: 800; font-size: 0.7rem; color: #222; display:flex; justify-content:center; gap:2px; align-items:center; }
-        .spec-val i { font-size: 0.6rem; color: #999; }
+        .spec-val { font-weight: 800; font-size: 0.7rem; color: #222; display:flex; justify-content:center; gap:2px; align-items:center; } .spec-val i { font-size: 0.6rem; color: #999; }
         .spec-label { font-size: 0.45rem; color: #888; text-transform: uppercase; font-weight: 600; margin-top: 1px; letter-spacing: -0.2px; }
 
-        /* AGENT BAR */
         .agent-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; }
         .agent-profile { display: flex; align-items: center; gap: 8px; flex: 1; overflow: hidden; }
         .agent-pic-box { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--primary); flex-shrink: 0; overflow: hidden; background: #eee; }
         .agent-text h4 { margin: 0; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; line-height: 1.1; }
         .agent-text p { margin: 1px 0 0 0; font-size: 0.6rem; color: #666; }
-        .agent-phone { font-size: 0.7rem; color: #111; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-top: 1px; }
-        .agent-phone i { color: #25D366; }
-        .qr-wrapper { width: 38px; height: 38px; padding: 2px; border: 1px solid #eee; border-radius: 4px; background:#fff; flex-shrink: 0;}
-        .qr-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+        .agent-phone { font-size: 0.7rem; color: #111; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-top: 1px; } .agent-phone i { color: #25D366; }
+        .qr-wrapper { width: 38px; height: 38px; padding: 2px; border: 1px solid #eee; border-radius: 4px; background:#fff; flex-shrink: 0;} .qr-wrapper img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* ============================
-           FEATURE 1: LUXURY DARK THEME
-           ============================ */
         #posterCanvas.luxury-theme .canvas-info-area { background: var(--lux-bg); color: var(--lux-text); }
         #posterCanvas.luxury-theme .canvas-img-area { background: var(--lux-bg); }
         #posterCanvas.luxury-theme .info-title { color: #fff; font-family: 'Playfair Display', serif; letter-spacing: 0.5px; }
         #posterCanvas.luxury-theme .prop-indicator { color: var(--lux-gold); }
-        #posterCanvas.luxury-theme .info-loc { color: #888; }
-        #posterCanvas.luxury-theme .info-loc i { color: var(--lux-gold) !important; }
-        
-        #posterCanvas.luxury-theme .specs-grid { border-color: #333; }
-        #posterCanvas.luxury-theme .spec-box { border-color: #333; }
-        #posterCanvas.luxury-theme .spec-val { color: var(--lux-gold); }
-        #posterCanvas.luxury-theme .spec-val i { color: #666; }
-        #posterCanvas.luxury-theme .spec-label { color: #888; }
+        #posterCanvas.luxury-theme .info-loc { color: #888; } #posterCanvas.luxury-theme .info-loc i { color: var(--lux-gold) !important; }
+        #posterCanvas.luxury-theme .specs-grid { border-color: #333; } #posterCanvas.luxury-theme .spec-box { border-color: #333; }
+        #posterCanvas.luxury-theme .spec-val { color: var(--lux-gold); } #posterCanvas.luxury-theme .spec-val i { color: #666; } #posterCanvas.luxury-theme .spec-label { color: #888; }
+        #posterCanvas.luxury-theme .agent-text h4 { color: #fff; } #posterCanvas.luxury-theme .agent-text p { color: #999; } #posterCanvas.luxury-theme .agent-phone { color: #eee; }
+        #posterCanvas.luxury-theme .pr-label { background: linear-gradient(45deg, #d4af37, #fcd34d); color: #000; } #posterCanvas.luxury-theme .pr-val { background: #222; color: #d4af37; }
 
-        #posterCanvas.luxury-theme .agent-text h4 { color: #fff; }
-        #posterCanvas.luxury-theme .agent-text p { color: #999; }
-        #posterCanvas.luxury-theme .agent-phone { color: #eee; }
-        
-        /* Luxury Price Pill */
-        #posterCanvas.luxury-theme .pr-label { background: linear-gradient(45deg, #d4af37, #fcd34d); color: #000; }
-        #posterCanvas.luxury-theme .pr-val { background: #222; color: #d4af37; }
-
-
-        /* NAVIGATION & UI */
         .nav-bar { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; border-top: 1px solid #eee; display: flex; z-index: 40; padding-bottom: 10px; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: #9ca3af; cursor: pointer; transition: 0.2s; font-weight: 600; }
-        .nav-btn.active { color: #111; }
-        .nav-btn.active i { color: var(--primary); transform: translateY(-2px); }
-        .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
-        
-        .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); transition: 0.2s; }
-        .btn-share { background: #059669; margin-left:10px; flex:1; } /* Green for Share */
+        .nav-btn.active { color: #111; } .nav-btn.active i { color: var(--primary); transform: translateY(-2px); } .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
         
         .segment-control { display: flex; background: #e5e7eb; padding: 3px; border-radius: 10px; margin-bottom: 15px; }
-        .segment-btn { flex: 1; padding: 8px; text-align: center; border: none; background: transparent; font-weight: 600; font-size: 0.8rem; cursor: pointer; border-radius: 8px; color: #666; transition: 0.2s; }
-        .segment-btn.active { background: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        
+        .segment-btn { flex: 1; padding: 8px; text-align: center; border: none; background: transparent; font-weight: 600; font-size: 0.8rem; cursor: pointer; border-radius: 8px; color: #666; transition: 0.2s; } .segment-btn.active { background: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .cap-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .cap-opt { background: #f9fafb; padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb; }
-        .cap-opt label { font-size: 0.7rem; color: #666; display: block; margin-bottom: 5px; }
-        .cap-opt select, .cap-opt button { width: 100%; font-size: 0.8rem; padding: 6px; }
-
+        .cap-opt { background: #f9fafb; padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb; } .cap-opt label { font-size: 0.7rem; color: #666; display: block; margin-bottom: 5px; } .cap-opt select, .cap-opt button { width: 100%; font-size: 0.8rem; padding: 6px; }
         .kpr-input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .kpr-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; text-align: center; }
-        .kpr-box label { color: #166534; font-size: 0.65rem; margin-bottom: 4px; display: block; }
-        .kpr-box input { text-align: center; padding: 5px; font-weight: bold; color: #15803d; border: 1px solid #86efac; background: #fff; }
-
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #111; color: #fff; padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; opacity: 0; transition: 0.4s; z-index: 100; pointer-events: none; display: flex; align-items: center; gap: 8px; }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        #loadingOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 200;
-            display: none; justify-content: center; align-items: center; flex-direction: column; color: white;
-        }
-
-        .slider-box {
-            background: #fff; padding: 10px 15px; border-radius: 12px; 
-            margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            display: flex; align-items: center; gap: 10px;
-        }
+        .kpr-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 8px; text-align: center; } .kpr-box label { color: #166534; font-size: 0.65rem; margin-bottom: 4px; display: block; } .kpr-box input { text-align: center; padding: 5px; font-weight: bold; color: #15803d; border: 1px solid #86efac; background: #fff; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #111; color: #fff; padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; opacity: 0; transition: 0.4s; z-index: 100; pointer-events: none; display: flex; align-items: center; gap: 8px; } .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 300; display: none; justify-content: center; align-items: center; flex-direction: column; color: white; }
+        .slider-box { background: #fff; padding: 10px 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 10px; }
     </style>
 </head>
 <body>
 
-<div id="aiModal" onclick="closeAIModal(event)">
+<div id="loadingOverlay">
+    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+    <div style="font-weight: 600;">Memproses...</div>
+</div>
+
+<div id="aiModal" onclick="closeModal('aiModal')">
     <div class="ai-content" onclick="event.stopPropagation()">
         <div class="ai-title">
             <span>✨ Pilih Judul AI (Random)</span>
-            <span onclick="closeAIModal(event)" style="cursor:pointer; font-size:1.5rem;">&times;</span>
+            <span onclick="closeModal('aiModal')" style="cursor:pointer;">&times;</span>
         </div>
         <div id="aiList"></div>
     </div>
 </div>
 
-<div id="projectModal" onclick="closeProjectModal(event)">
+<div id="projectModal" onclick="closeModal('projectModal')">
     <div class="ai-content" onclick="event.stopPropagation()">
         <div class="ai-title">
-            <span>📂 Kelola Listing (Save Slots)</span>
-            <span onclick="closeProjectModal(event)" style="cursor:pointer; font-size:1.5rem;">&times;</span>
+            <span>📂 Kelola Listing</span>
+            <span onclick="closeModal('projectModal')" style="cursor:pointer;">&times;</span>
         </div>
-        
         <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="text" id="saveName" placeholder="Nama Listing (Cth: Rumah BSD)" style="border:1px solid #ccc;">
             <button class="btn-ai-gen" onclick="saveCurrentProject()" style="width:auto; margin:0;"><i class="fas fa-save"></i> Save</button>
@@ -328,17 +202,83 @@
     </div>
 </div>
 
-<div id="loadingOverlay">
-    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-    <div style="font-weight: 600;">Memproses...</div>
+<div id="buyModal" onclick="closeModal('buyModal')">
+    <div class="ai-content" onclick="event.stopPropagation()">
+        <div class="ai-title">
+            <span>💎 Upgrade ke PRO</span>
+            <span onclick="closeModal('buyModal')" style="cursor:pointer;">&times;</span>
+        </div>
+        <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">
+            Dapatkan akses fitur Premium: Hapus Watermark, AI Judul, Luxury Style, dan lainnya.
+        </p>
+        <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="buyName" placeholder="Nama Anda" style="border:1px solid #ccc;">
+        </div>
+        <div class="form-group">
+            <label>Nomor WhatsApp</label>
+            <input type="tel" id="buyWA" placeholder="08xxx" style="border:1px solid #ccc;">
+        </div>
+        <button class="btn-action" style="background:#25D366;" onclick="processOrder()">BELI SEKARANG</button>
+    </div>
+</div>
+
+<div id="paymentModal">
+    <div class="ai-content">
+        <div class="ai-title" style="color:#166534"><span>✅ Order Diterima!</span></div>
+        <p style="font-size:0.9rem; text-align:center; margin-bottom:10px;">Silakan transfer pembayaran ke:</p>
+        
+        <div class="pay-box">
+            <span style="font-size:0.8rem; font-weight:600; color:#166534">BANK BCA</span>
+            <span class="pay-rek" id="rekNum">0040112928</span>
+            <span style="font-size:0.8rem; color:#166534">An. HERMAN KOSASI</span>
+            <br><button class="copy-btn" onclick="copyRek()">Salin No. Rek</button>
+        </div>
+        
+        <p style="font-size:0.8rem; text-align:center; color:#666; margin-bottom:15px;">
+            <div id="paymentInfo">Kode unik telah dibuat. Konfirmasi via WA untuk aktivasi.</div>
+        </p>
+        
+        <button class="btn-action" style="background:#25D366;" onclick="confirmWA()"><i class="fab fa-whatsapp"></i> KONFIRMASI PEMBAYARAN</button>
+        <button class="btn-reset" style="width:100%; background:none; color:#999; margin-top:10px; font-size:0.8rem;" onclick="closeModal('paymentModal')">Tutup</button>
+    </div>
+</div>
+
+<div id="userProfileModal" onclick="closeModal('userProfileModal')">
+    <div class="ai-content" onclick="event.stopPropagation()">
+        <div class="ai-title">
+            <span>👤 Profil Pengguna</span>
+            <span onclick="closeModal('userProfileModal')" style="cursor:pointer;">&times;</span>
+        </div>
+        
+        <div class="user-card-info">
+            <div class="uc-avatar"><i class="fas fa-user"></i></div>
+            <div class="uc-name" id="profileName">-</div>
+            <div class="uc-status">PRO MEMBER</div>
+            <div class="uc-exp" id="profileExp">Berlaku sampai: -</div>
+        </div>
+        
+        <div style="font-size:0.75rem; color:#666; margin-bottom:10px;">
+            <i class="fas fa-info-circle"></i> Simpan Kode Lisensi Anda baik-baik. Jika history browser terhapus, Anda perlu memasukkannya lagi.
+        </div>
+        
+        <button class="btn-logout" onclick="logout()">LOGOUT / GANTI AKUN</button>
+    </div>
 </div>
 
 <div class="mobile-frame">
     <div class="header">
-        <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v9.20</span></h1>
-        <div style="display:flex; gap:10px;">
-            <button class="btn-reset" onclick="openProjectModal()" style="background:#dbeafe; color:#2563eb;"><i class="fas fa-folder-open"></i></button>
-            <button class="btn-reset" onclick="resetData()"><i class="fas fa-trash-alt"></i></button>
+        <div class="header-left">
+            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v17.0</span></h1>
+            <div class="user-greet" id="userGreet" onclick="openUserProfile()" style="display:none;">
+                <i class="fas fa-user-circle"></i> <span id="headerUserName">User</span>
+            </div>
+        </div>
+        <div class="btn-group-head">
+            <button class="btn-buy-pro" id="btnBuy" onclick="openBuyModal()"><i class="fas fa-crown"></i> BELI PRO</button>
+            <button class="btn-reset btn-lic" id="btnLicense" onclick="checkLicense()" title="Masukan Lisensi"><i class="fas fa-key"></i></button>
+            <button class="btn-reset" onclick="openProjectModal()"><i class="fas fa-folder-open"></i></button>
+            <button class="btn-reset" onclick="resetForm()" title="Buat Baru / Reset"><i class="fas fa-file-alt"></i></button>
         </div>
     </div>
     <div id="toast" class="toast"><i class="fas fa-check-circle" style="color:var(--primary)"></i> Tersimpan</div>
@@ -373,7 +313,7 @@
              </div>
 
             <div class="card">
-                <div class="card-head"><i class="fas fa-images"></i> Foto Properti (Max 4)</div>
+                <div class="card-head"><i class="fas fa-images"></i> Foto Properti</div>
                 <div class="upload-grid">
                     <div class="upload-box" id="box-0" onclick="triggerUpload(0)">
                         <div class="placeholder"><i class="fas fa-plus"></i>Foto Utama</div>
@@ -400,10 +340,17 @@
                 
                 <div style="padding:0 15px 15px 15px;">
                     <div style="display:flex; gap:15px; border-top:1px dashed #eee;">
-                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#333;"><input type="checkbox" id="checkWatermark" checked style="width:auto;"> 🛡️ Watermark (Tengah)</label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#333;">
+                            <input type="checkbox" id="checkWatermark" checked onclick="handleWatermarkToggle(event)" style="width:auto;"> 
+                            🛡️ Watermark (Tengah)
+                        </label>
                         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#333;"><input type="checkbox" id="checkQR" checked onchange="renderAll()" style="width:auto;"> QR Code</label>
                     </div>
-                    <div class="form-group" style="margin-top:10px;"><label>Teks Watermark</label><input type="text" id="wmCustomText" placeholder="Default: Nama Kantor" oninput="renderAll()"></div>
+                    <div class="form-group input-group-locked" style="margin-top:10px;">
+                        <label>Teks Watermark</label>
+                        <input type="text" id="wmCustomText" placeholder="AGENTPRO (Default)" oninput="renderAll()" onfocus="checkProFeature(this)">
+                        <i class="fas fa-lock lock-icon" id="lockWm"></i>
+                    </div>
                 </div>
             </div>
 
@@ -434,11 +381,11 @@
                 <div class="row form-group" id="priceContainer">
                     <div class="col" id="colJual">
                         <label>Harga Jual (M/Jt)</label>
-                        <input type="text" id="hargaJual" value="RP 4.5 M" oninput="renderAll()" style="font-weight:700;" placeholder="Rp ...">
+                        <input type="text" id="hargaJual" oninput="renderAll()" style="font-weight:700;" placeholder="Rp ...">
                     </div>
                     <div class="col hidden-input" id="colSewa">
                         <label>Harga Sewa (Jt/Thn)</label>
-                        <input type="text" id="hargaSewa" value="RP 150 JT/THN" oninput="renderAll()" style="font-weight:700;" placeholder="Rp ...">
+                        <input type="text" id="hargaSewa" oninput="renderAll()" style="font-weight:700;" placeholder="Rp ...">
                     </div>
                 </div>
 
@@ -446,56 +393,60 @@
                 
                 <div class="form-group">
                     <label>Judul Headline</label>
-                    <input type="text" id="judul" value="RUMAH MEWAH HOOK LOKASI STRATEGIS" oninput="renderAll()">
-                    <button class="btn-ai-gen" onclick="openAIHeadlines()"><i class="fas fa-magic"></i> Buat Judul Otomatis (AI)</button>
+                    <input type="text" id="judul" oninput="renderAll()" placeholder="Contoh: RUMAH MEWAH DI PIK">
+                    <button class="btn-ai-gen" onclick="openAIHeadlines()"><i class="fas fa-magic"></i> Buat Judul Otomatis (AI) <span style="background:#000; color:gold; padding:0 4px; border-radius:3px; font-size:0.6rem; margin-left:5px;">PRO</span></button>
                 </div>
 
-                <div class="form-group"><label>Lokasi</label><input type="text" id="lokasi" value="BSD City, Tangerang" oninput="renderAll()"></div>
+                <div class="form-group"><label>Lokasi</label><input type="text" id="lokasi" oninput="renderAll()" placeholder="Contoh: Jakarta Barat"></div>
             </div>
 
             <div class="card">
                 <div class="card-head"><i class="fas fa-sliders-h"></i> Spesifikasi</div>
                 <div class="row form-group">
-                    <div class="col"><label>LT (m²)</label><input type="number" id="lt" value="160" oninput="renderAll()"></div>
-                    <div class="col"><label>LB (m²)</label><input type="number" id="lb" value="220" oninput="renderAll()"></div>
-                    <div class="col"><label>KT</label><input type="number" id="kt" value="4" oninput="renderAll()"></div>
-                    <div class="col"><label>KM</label><input type="number" id="km" value="3" oninput="renderAll()"></div>
+                    <div class="col"><label>LT (m²)</label><input type="number" id="lt" oninput="renderAll()"></div>
+                    <div class="col"><label>LB (m²)</label><input type="number" id="lb" oninput="renderAll()"></div>
+                    <div class="col"><label>KT</label><input type="number" id="kt" oninput="renderAll()"></div>
+                    <div class="col"><label>KM</label><input type="number" id="km" oninput="renderAll()"></div>
                 </div>
                 <div class="row form-group">
                     <div class="col">
                         <label>Legal</label>
                         <select id="legal" onchange="renderAll()">
+                            <option value="">- (Kosong) -</option>
                             <option value="SHM">SHM</option>
                             <option value="HGB">HGB</option>
                             <option value="AJB">AJB</option>
                             <option value="PPJB">PPJB</option>
-                            <option value="">- (Kosong) -</option>
                         </select>
                     </div>
-                    <div class="col"><label>Watt</label><input type="text" id="listrik" value="3500" oninput="renderAll()"></div>
+                    <div class="col"><label>Watt</label><input type="text" id="listrik" oninput="renderAll()"></div>
                 </div>
                 <div class="row form-group">
                     <div class="col">
                         <label>Hadap</label>
                         <select id="hadap" onchange="renderAll()">
-                            <option>Utara</option><option>Selatan</option><option>Timur</option><option>Barat</option><option>Utr-Tmr</option><option>Utr-Brt</option><option>Slt-Tmr</option><option>Slt-Brt</option>
                             <option value="">- (Kosong) -</option>
+                            <option>Utara</option><option>Selatan</option><option>Timur</option><option>Barat</option><option>Utr-Tmr</option><option>Utr-Brt</option><option>Slt-Tmr</option><option>Slt-Brt</option>
                         </select>
                     </div>
-                    <div class="col"><label>Air</label><input type="text" id="air" value="PDAM" oninput="renderAll()"></div>
+                    <div class="col"><label>Air</label><input type="text" id="air" oninput="renderAll()"></div>
                 </div>
                 
                 <div class="row form-group">
                     <div class="col">
                         <label>Furnish</label>
                         <select id="furnish" onchange="renderAll()">
-                            <option value="Semi">Semi</option><option value="Full">Full</option><option value="Kosong">Kosong</option>
                             <option value="">- (Kosong) -</option>
+                            <option value="Semi">Semi</option><option value="Full">Full</option><option value="Kosong">Kosong</option>
                         </select>
                     </div>
-                    <div class="col"><label>Garasi/Carport</label><input type="number" id="garasi" value="2" oninput="renderAll()"></div>
+                    <div class="col"><label>Garasi/Carport</label><input type="number" id="garasi" oninput="renderAll()"></div>
                 </div>
-                 <div class="form-group"><label>Poin Plus</label><textarea id="poin" rows="2">Siap huni, bebas banjir, keamanan 24 jam</textarea></div>
+                 <div class="form-group input-group-locked">
+                     <label>Poin Plus / Deskripsi</label>
+                     <textarea id="poin" rows="2" placeholder="Detail Properti (Terkunci di Versi Free)..." onclick="checkProFeature(this)"></textarea>
+                     <i class="fas fa-lock lock-icon" id="lockPoin"></i>
+                 </div>
             </div>
             
             <div class="card">
@@ -512,19 +463,19 @@
                 <div class="row">
                      <div class="col" style="flex:0.3">
                          <div style="width:100%; aspect-ratio:1; background:#f3f4f6; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:1px dashed #ccc; overflow:hidden;" onclick="document.getElementById('fileAg').click()">
-                            <img id="agEditPreview" class="img-cover" src="https://randomuser.me/api/portraits/men/32.jpg" crossorigin="anonymous">
+                            <img id="agEditPreview" class="img-cover" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E">
                          </div>
                          <input type="file" id="fileAg" hidden accept="image/*" onchange="loadAgentImg(event)">
                      </div>
                      <div class="col">
-                         <div class="form-group" style="margin-bottom:8px;"><label>Nama</label><input type="text" id="nama" value="Herman Kosasi" oninput="renderAll()"></div>
-                         <div class="form-group" style="margin-bottom:0;"><label>WhatsApp</label><input type="tel" id="hp" value="081234567890" oninput="renderAll()"></div>
+                         <div class="form-group" style="margin-bottom:8px;"><label>Nama</label><input type="text" id="nama" oninput="renderAll()"></div>
+                         <div class="form-group" style="margin-bottom:0;"><label>WhatsApp</label><input type="tel" id="hp" oninput="renderAll()"></div>
                      </div>
                 </div>
-                <div class="form-group" style="margin-top:10px;"><label>Nama Kantor</label><input type="text" id="kantor" value="Brighton Titanium PIK" oninput="renderAll()"></div>
+                <div class="form-group" style="margin-top:10px;"><label>Nama Kantor</label><input type="text" id="kantor" oninput="renderAll()"></div>
                 
                 <div class="form-group" style="margin-top:10px; border-top:1px dashed #eee; padding-top:10px;">
-                    <label>Logo Kantor / Agency (PNG Transparan)</label>
+                    <label>Logo Kantor / Agency (PNG Transparan) <span id="proBadgeLogo" style="background:#000; color:gold; padding:2px 4px; border-radius:3px; font-size:0.6rem; margin-left:5px;">PRO ONLY</span></label>
                     <div style="display:flex; gap:10px; align-items:center;">
                         <div style="width:60px; height:40px; background:#eee; display:flex; align-items:center; justify-content:center; border-radius:4px; overflow:hidden; border:1px solid #ddd;">
                              <img id="logoPreview" style="max-width:100%; max-height:100%; display:none;">
@@ -557,7 +508,7 @@
                 <label>Style Desain</label>
                 <select id="posterStyle" onchange="changePosterStyle(this.value)">
                     <option value="modern">⚪ Modern (Clean Light)</option>
-                    <option value="luxury">⚫ Luxury (Black & Gold)</option>
+                    <option value="luxury">⚫ Luxury (Black & Gold) [PRO]</option>
                 </select>
             </div>
 
@@ -571,14 +522,14 @@
                                 </div>
 
                             <div id="stampDisplay" class="status-badge">TERJUAL</div>
-                            <div class="watermark" id="watermarkLayer"><span id="wmTextDisplay">BRIGHTON</span></div>
+                            <div class="watermark" id="watermarkLayer"><span id="wmTextDisplay">AGENTPRO</span></div>
                         </div>
 
                         <div class="canvas-info-area">
                             <div>
                                 <div class="prop-indicator" id="o_tipe_display">RUMAH</div>
-                                <div class="info-title" id="o_judul">RUMAH MEWAH HOOK LOKASI STRATEGIS</div>
-                                <div class="info-loc"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> <span id="o_lokasi">BSD City</span></div>
+                                <div class="info-title" id="o_judul">JUDUL PROPERTY</div>
+                                <div class="info-loc"><i class="fas fa-map-marker-alt" style="color:var(--primary)"></i> <span id="o_lokasi">Lokasi</span></div>
                                 
                                 <div class="specs-grid">
                                     <div class="spec-box" id="box_lt"><div class="spec-val"><i class="fas fa-expand"></i> <span id="o_lt">160</span></div><div class="spec-label">LT</div></div>
@@ -598,12 +549,12 @@
                             <div class="agent-bar">
                                 <div class="agent-profile">
                                     <div class="agent-pic-box">
-                                        <img id="agDisplay" class="img-cover" src="https://randomuser.me/api/portraits/men/32.jpg" crossorigin="anonymous">
+                                        <img id="agDisplay" class="img-cover" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E">
                                     </div>
                                     <div class="agent-text">
-                                        <h4 id="o_nama">HERMAN KOSASI</h4>
-                                        <p id="o_kontak">Brighton Titanium PIK</p>
-                                        <span id="o_hp_display" class="agent-phone"><i class="fab fa-whatsapp"></i> 081234567890</span>
+                                        <h4 id="o_nama">NAMA AGEN</h4>
+                                        <p id="o_kontak">Nama Kantor</p>
+                                        <span id="o_hp_display" class="agent-phone"><i class="fab fa-whatsapp"></i> 0812...</span>
                                     </div>
                                 </div>
                                 
@@ -667,6 +618,10 @@
 </div>
 
 <script>
+    // --- KONFIGURASI PENTING ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDO__v2wnUEF5V-0cQb4q_iEmd5U0LzymOcWgCILiwptWIzkV1-PjOzlUAKcHFp4Q/exec"; 
+    // ----------------------------
+
     let currentMode = 'feed';
     const themes = {
         'yellow': { primary: '#FFD900', text: '#000000' },
@@ -676,16 +631,166 @@
         'gold': { primary: '#d4af37', text: '#ffffff' }
     };
     
+    // SAFE DEFAULT IMAGE (Base64)
     let propImages = [null, null, null, null]; 
-    let defaultImg = 'https://images.unsplash.com/photo-1600596542815-e328d4de4bf7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80';
+    let defaultImg = "data:image/svg+xml,%3Csvg width='600' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23eee'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='24' fill='%23aaa' dominant-baseline='middle' text-anchor='middle'%3EPreview Foto%3C/text%3E%3C/svg%3E";
+    
     let activeUploadSlot = 0;
     let globalBrightness = 100;
     let qrDebounceTimer;
     let officeLogoData = null;
+    
+    let userLicenseStatus = "FREE";
+    let tempBuyName = "";
+    let tempCode = "";
 
-    window.onload = function() { loadProfile(); handleStatusChange(); autoScale(); setTimeout(fitAllImages, 500); };
+    window.onload = function() { 
+        loadProfile(); 
+        handleStatusChange(); 
+        autoScale(); 
+        setTimeout(fitAllImages, 500); 
+        
+        const lic = localStorage.getItem('agentPro_license');
+        if(lic) {
+            try {
+                const user = JSON.parse(lic);
+                userLicenseStatus = "PRO";
+                updateUIForPro(user);
+            } catch(e) {
+                console.log("Lisensi invalid");
+            }
+        } else {
+            document.querySelectorAll('.input-group-locked').forEach(el => el.classList.add('pro-locked'));
+        }
+    };
     window.onresize = () => { autoScale(); fitAllImages(); };
 
+    // --- MODAL SYSTEM ---
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+    
+    function openBuyModal() {
+        document.getElementById('buyModal').style.display = 'flex';
+    }
+    
+    function openUserProfile() {
+        document.getElementById('userProfileModal').style.display = 'flex';
+        // Load data from local
+        const lic = localStorage.getItem('agentPro_license');
+        if(lic) {
+            const user = JSON.parse(lic);
+            document.getElementById('profileName').innerText = user.name || "User";
+            document.getElementById('profileExp').innerText = "Berlaku sampai: " + (user.expired || "-");
+        }
+    }
+
+    // --- BUY LOGIC ---
+    function processOrder() {
+        const name = document.getElementById('buyName').value;
+        const wa = document.getElementById('buyWA').value;
+        if(!name || !wa) return alert("Mohon isi Nama dan WhatsApp!");
+        
+        tempBuyName = name;
+        document.getElementById('loadingOverlay').style.display = 'flex';
+
+        fetch(SCRIPT_URL + "?action=register&nama=" + encodeURIComponent(name) + "&hp=" + encodeURIComponent(wa))
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            if(data.status === "BERHASIL") {
+                tempCode = data.code; 
+                closeModal('buyModal');
+                
+                const infoText = data.info === "EXISTING" ? 
+                    "Anda memiliki pesanan yang belum dibayar. Gunakan kode ini:" : 
+                    "Kode unik telah dibuat. Konfirmasi via WA untuk aktivasi.";
+                
+                document.getElementById('paymentInfo').innerText = infoText;
+                document.getElementById('paymentModal').style.display = 'flex';
+            } else {
+                alert("Gagal membuat order: " + data.pesan);
+            }
+        })
+        .catch(err => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            alert("Gagal koneksi. Coba lagi.");
+        });
+    }
+
+    function confirmWA() {
+        const msg = `Halo Admin, saya sudah transfer ke BCA 0040112928 untuk lisensi AgentPro.\n\nNama: ${tempBuyName}\nKode Order: ${tempCode}\n\nMohon diaktifkan.`;
+        window.open(`https://wa.me/6285760035568?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+    
+    function copyRek() {
+        navigator.clipboard.writeText("0040112928").then(() => alert("No Rekening Disalin!"));
+    }
+
+    // --- LICENSE CHECK ---
+    function checkLicense() {
+        if(userLicenseStatus === 'PRO') {
+            openUserProfile(); 
+            return;
+        }
+        
+        const code = prompt("Masukkan Kode Lisensi:");
+        if(!code) return;
+
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        
+        fetch(SCRIPT_URL + "?action=check&kode=" + code)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            if(data.status === "SUKSES") {
+                userLicenseStatus = "PRO";
+                const userData = { name: data.nama, expired: data.expired, code: code };
+                localStorage.setItem('agentPro_license', JSON.stringify(userData));
+                
+                alert("✅ Selamat datang " + data.nama + "! Fitur PRO Aktif.");
+                updateUIForPro(userData);
+            } else {
+                alert("❌ " + data.pesan);
+            }
+        })
+        .catch(err => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            alert("Gagal koneksi server.");
+        });
+    }
+    
+    function logout() {
+        if(confirm("Yakin ingin keluar? Fitur PRO akan terkunci kembali.")) {
+            localStorage.removeItem('agentPro_license');
+            location.reload();
+        }
+    }
+
+    function updateUIForPro(userData) {
+        document.getElementById('btnLicense').style.display = 'none'; 
+        document.getElementById('btnBuy').style.display = 'none';
+        
+        const greet = document.getElementById('userGreet');
+        greet.style.display = 'flex';
+        document.getElementById('headerUserName').innerText = userData.name || "User";
+        
+        document.getElementById('proBadgeLogo').style.display = 'none'; 
+        
+        document.getElementById('wmCustomText').readOnly = false;
+        document.getElementById('poin').readOnly = false;
+        document.getElementById('poin').placeholder = "Contoh: Bebas banjir, dekat tol...";
+        
+        document.getElementById('lockWm').style.display = 'none';
+        document.getElementById('lockPoin').style.display = 'none';
+        
+        document.querySelectorAll('.input-group-locked').forEach(el => el.classList.remove('pro-locked'));
+
+        document.getElementById('toast').innerHTML = '<i class="fas fa-check"></i> Mode PRO Aktif';
+        document.getElementById('toast').classList.add('show');
+        setTimeout(() => document.getElementById('toast').classList.remove('show'), 2000);
+    }
+    
     function applyTheme() {
         const themeKey = document.getElementById('themeColor').value;
         const theme = themes[themeKey];
@@ -693,8 +798,30 @@
         document.documentElement.style.setProperty('--text-on-primary', theme.text);
     }
     
-    /* --- NEW FEATURE: CHANGE POSTER STYLE --- */
+    // --- LOCK HELPERS ---
+    function handleWatermarkToggle(e) {
+        if(userLicenseStatus !== 'PRO') {
+            e.preventDefault(); 
+            alert("🔒 UPGRADE KE PRO!\n\nAgen Gratis wajib menampilkan Watermark.\nSilakan masukkan lisensi untuk menghapusnya.");
+        } else {
+            renderAll(); 
+        }
+    }
+
+    function checkProFeature(el) {
+        if(userLicenseStatus !== 'PRO') {
+            el.blur(); 
+            alert("🔒 FITUR TERKUNCI!\n\nFitur ini khusus member PRO.\nSilakan masukkan kode lisensi.");
+        }
+    }
+
     function changePosterStyle(style) {
+        if(style === 'luxury' && userLicenseStatus !== 'PRO') {
+            alert("🔒 GAYA LUXURY TERKUNCI!\n\nFitur ini khusus member PRO.");
+            document.getElementById('posterStyle').value = 'modern';
+            return;
+        }
+
         const canvas = document.getElementById('posterCanvas');
         if(style === 'luxury') {
             canvas.classList.add('luxury-theme');
@@ -703,6 +830,61 @@
         }
     }
 
+    function openAIHeadlines() {
+        if(userLicenseStatus !== 'PRO') {
+            alert("🔒 AI HEADLINE TERKUNCI!\n\nUpgrade ke PRO untuk membuat judul otomatis.");
+            return;
+        }
+        
+        const val = (id) => document.getElementById(id).value;
+        const tipe = val('tipeProp').toUpperCase();
+        const loc = val('lokasi').toUpperCase().split(',')[0];
+        const harga = val('hargaJual');
+        const specs = `${val('lt')}m²`;
+        
+        const templates = [
+            `DIJUAL CEPAT! ${tipe} DI ${loc} HANYA ${harga}`,
+            `${tipe} MEWAH SIAP HUNI DI ${loc}, LT ${specs}`,
+            `INVESTASI TERBAIK! ${tipe} STRATEGIS DI JANTUNG ${loc}`,
+            `TERMURAH DI KELASNYA! ${tipe} ${loc} JARANG ADA`,
+            `BUC! ${tipe} ${loc} HARGA MIRING ${harga} NEGO`,
+            `${tipe} CANTIK TERAWAT DI ${loc}, LINGKUNGAN ASRI`,
+            `HITUNG TANAH SAJA! ${tipe} ${loc} POSISI HOOK`,
+            `LANGKA! ${tipe} ${loc} HARGA NEGO SAMPAI JADI`,
+            `DEKAT AKSES TOL! ${tipe} ${loc} BEBAS BANJIR`,
+            `${tipe} MODERN MINIMALIS DI ${loc} SIAP HUNI`,
+            `TURUN HARGA! ${tipe} ${loc} DARI PEMILIK LANGSUNG`,
+            `${tipe} BARU GRESS DI ${loc} - ${harga} SAJA!`,
+            `HOT DEAL! ${tipe} ${loc} LOKASI PREMIUM`,
+            `JUAL BUTUH! ${tipe} ${loc} DIBAWAH PASAR`,
+            `${tipe} 2 LANTAI DI ${loc}, DESIGN MEWAH`
+        ];
+
+        for (let i = templates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [templates[i], templates[j]] = [templates[j], templates[i]];
+        }
+        
+        const list = document.getElementById('aiList');
+        list.innerHTML = ''; 
+        
+        templates.slice(0, 3).forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'ai-option';
+            div.innerText = opt;
+            div.onclick = () => selectAIHeadline(opt);
+            list.appendChild(div);
+        });
+        document.getElementById('aiModal').style.display = 'flex';
+    }
+
+    function selectAIHeadline(text) {
+        document.getElementById('judul').value = text;
+        renderAll();
+        closeAIModal('aiModal');
+    }
+
+    // --- UPLOAD & RENDER ---
     function triggerUpload(idx) {
         activeUploadSlot = idx;
         document.getElementById('fileInput').click();
@@ -711,6 +893,10 @@
     function handleFileSelect(event) {
         const f = event.target.files[0];
         if(f) {
+            if (f.size > 5 * 1024 * 1024) {
+                alert("File terlalu besar! Max 5MB.");
+                return;
+            }
             const r = new FileReader();
             r.onload = (ev) => {
                 propImages[activeUploadSlot] = ev.target.result;
@@ -744,30 +930,28 @@
     }
 
     function renderImages() {
-        const activeImgs = propImages.filter(img => img !== null);
-        const container = document.getElementById('imgGrid');
-        
+        const c = document.getElementById('imgGrid');
         const priceBadge = document.getElementById('dynamicPriceBox');
         const stamp = document.getElementById('stampDisplay');
         const wm = document.getElementById('watermarkLayer');
-
-        container.innerHTML = ''; 
         
-        let count = activeImgs.length;
-        if(count === 0) { count = 1; activeImgs.push(defaultImg); } 
-
-        container.className = `canvas-img-area layout-${count}`;
-
-        activeImgs.forEach((src, idx) => {
+        c.innerHTML = ''; 
+        
+        const active = propImages.filter(i => i);
+        let count = active.length;
+        if(count === 0) { count = 1; active.push(defaultImg); }
+        
+        c.className = `canvas-img-area layout-${count}`;
+        active.forEach((src, i) => {
             const div = document.createElement('div');
             div.className = 'grid-item';
-            div.innerHTML = `<img id="gridImg-${idx}" src="${src}" crossorigin="anonymous" onload="manualFitSingle('gridImg-${idx}')" style="filter: brightness(${globalBrightness}%)">`;
-            container.appendChild(div);
+            div.innerHTML = `<img id="gridImg-${i}" src="${src}" crossorigin="anonymous" onload="manualFitSingle('gridImg-${i}')" style="filter: brightness(${globalBrightness}%)">`;
+            c.appendChild(div);
         });
-
-        if(priceBadge) container.appendChild(priceBadge);
-        if(stamp) container.appendChild(stamp);
-        if(wm) container.appendChild(wm);
+        
+        if(priceBadge) c.appendChild(priceBadge);
+        if(stamp) c.appendChild(stamp);
+        if(wm) c.appendChild(wm);
         
         setTimeout(fitAllImages, 100);
     }
@@ -789,24 +973,18 @@
 
     function handleStatusChange() {
         const s = document.getElementById('status').value;
-        const cJual = document.getElementById('colJual');
-        const cSewa = document.getElementById('colSewa');
-        
-        if(s === 'DIJUAL') {
-            cJual.classList.remove('hidden-input');
-            cSewa.classList.add('hidden-input');
-        } else if (s === 'DISEWA') {
-            cJual.classList.add('hidden-input');
-            cSewa.classList.remove('hidden-input');
-        } else {
-            cJual.classList.remove('hidden-input');
-            cSewa.classList.remove('hidden-input');
-        }
+        document.getElementById('colJual').className = (s === 'DISEWA') ? 'col hidden-input' : 'col';
+        document.getElementById('colSewa').className = (s === 'DIJUAL') ? 'col hidden-input' : 'col';
         renderAll();
     }
 
-    // --- LOGIC LOGO KANTOR ---
     function handleLogoSelect(event) {
+        if(userLicenseStatus !== 'PRO') {
+            alert("🔒 UPLOAD LOGO TERKUNCI!\n\nFitur ini khusus member PRO.");
+            document.getElementById('fileLogo').value = ''; 
+            return;
+        }
+
         const f = event.target.files[0];
         if(f) {
             const r = new FileReader();
@@ -848,7 +1026,9 @@
         const val = (id) => document.getElementById(id).value;
         const status = document.getElementById('status').value;
 
-        localStorage.setItem('agentPro_text', JSON.stringify({ nama: val('nama'), hp: val('hp'), kantor: val('kantor'), wm: val('wmCustomText'), theme: val('themeColor') }));
+        if(val('nama') && val('hp')) {
+            localStorage.setItem('agentPro_text', JSON.stringify({ nama: val('nama'), hp: val('hp'), kantor: val('kantor'), wm: val('wmCustomText'), theme: val('themeColor') }));
+        }
 
         const mapText = (src, dest) => { 
             const el = document.getElementById(dest);
@@ -932,80 +1112,27 @@
 
         const wmEl = document.getElementById('watermarkLayer');
         if(wmEl) {
-            wmEl.style.display = document.getElementById('checkWatermark').checked ? 'flex' : 'none';
+            const isChecked = document.getElementById('checkWatermark').checked;
+            wmEl.style.display = isChecked ? 'flex' : 'none';
         } 
         const wmText = document.getElementById('wmTextDisplay');
-        if(wmText) wmText.innerText = val('wmCustomText') || val('kantor').split(' ')[0].toUpperCase();
+        const customText = val('wmCustomText');
+        if(customText && customText.trim() !== "") {
+             wmText.innerText = customText;
+        } else {
+             wmText.innerText = "AGENTPRO";
+        }
 
         generateQR(); // Debounced
         generateCaption();
     }
 
-    function openAIHeadlines() {
-        const val = (id) => document.getElementById(id).value;
-        const tipe = val('tipeProp').toUpperCase();
-        const loc = val('lokasi').toUpperCase().split(',')[0];
-        const harga = val('hargaJual');
-        const specs = `${val('lt')}m²`;
-        
-        const templates = [
-            `DIJUAL CEPAT! ${tipe} DI ${loc} HANYA ${harga}`,
-            `${tipe} MEWAH SIAP HUNI DI ${loc}, LT ${specs}`,
-            `INVESTASI TERBAIK! ${tipe} STRATEGIS DI JANTUNG ${loc}`,
-            `TERMURAH DI KELASNYA! ${tipe} ${loc} JARANG ADA`,
-            `BUC! ${tipe} ${loc} HARGA MIRING ${harga} NEGO`,
-            `${tipe} CANTIK TERAWAT DI ${loc}, LINGKUNGAN ASRI`,
-            `HITUNG TANAH SAJA! ${tipe} ${loc} POSISI HOOK`,
-            `LANGKA! ${tipe} ${loc} HARGA NEGO SAMPAI JADI`,
-            `DEKAT AKSES TOL! ${tipe} ${loc} BEBAS BANJIR`,
-            `${tipe} MODERN MINIMALIS DI ${loc} SIAP HUNI`,
-            `TURUN HARGA! ${tipe} ${loc} DARI PEMILIK LANGSUNG`,
-            `${tipe} BARU GRESS DI ${loc} - ${harga} SAJA!`,
-            `HOT DEAL! ${tipe} ${loc} LOKASI PREMIUM`,
-            `JUAL BUTUH! ${tipe} ${loc} DIBAWAH PASAR`,
-            `${tipe} 2 LANTAI DI ${loc}, DESIGN MEWAH`
-        ];
-
-        for (let i = templates.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [templates[i], templates[j]] = [templates[j], templates[i]];
-        }
-        const selectedOptions = templates.slice(0, 3);
-        const list = document.getElementById('aiList');
-        list.innerHTML = ''; 
-        
-        selectedOptions.forEach(opt => {
-            const div = document.createElement('div');
-            div.className = 'ai-option';
-            div.innerText = opt;
-            div.onclick = () => selectAIHeadline(opt);
-            list.appendChild(div);
-        });
-        document.getElementById('aiModal').style.display = 'flex';
-    }
-
-    function selectAIHeadline(text) {
-        document.getElementById('judul').value = text;
-        renderAll();
-        closeAIModal();
-    }
-
-    function closeAIModal(e) {
-        if(e) e.stopPropagation();
-        document.getElementById('aiModal').style.display = 'none';
-    }
-
-    // --- LOGIC PROJECT MANAGER (SAVE SLOTS) ---
+    // --- PROJECT MANAGER ---
     function openProjectModal() {
         document.getElementById('projectModal').style.display = 'flex';
         renderProjectList();
         const currentTitle = document.getElementById('judul').value;
         if(currentTitle) document.getElementById('saveName').value = currentTitle.substring(0, 20);
-    }
-
-    function closeProjectModal(e) {
-        if(e) e.stopPropagation();
-        document.getElementById('projectModal').style.display = 'none';
     }
 
     function saveCurrentProject() {
@@ -1028,7 +1155,8 @@
             formData: data,
             images: propImages,
             agentImg: localStorage.getItem('agentPro_img'),
-            logoImg: officeLogoData
+            logoImg: officeLogoData,
+            posterStyle: document.getElementById('posterStyle').value 
         };
 
         try {
@@ -1104,14 +1232,20 @@
             officeLogoData = p.logoImg || null;
             updateLogoUI();
             
-            // New: Restore Poster Style if saved (manual check as it might not be in formData loop if select added later)
-            if(formData['posterStyle']) changePosterStyle(formData['posterStyle']);
+            if(p.posterStyle) {
+                if(p.posterStyle === 'luxury' && userLicenseStatus !== 'PRO') {
+                    changePosterStyle('modern');
+                } else {
+                    document.getElementById('posterStyle').value = p.posterStyle;
+                    changePosterStyle(p.posterStyle);
+                }
+            }
 
             updateThumbnails();
             renderImages();
             handleStatusChange();
             renderAll();
-            closeProjectModal();
+            closeModal('projectModal');
             
             document.getElementById('toast').innerHTML = '<i class="fas fa-check"></i> Listing Loaded';
             document.getElementById('toast').classList.add('show');
@@ -1119,6 +1253,7 @@
         }
     }
 
+    // --- GENERATORS ---
     function generateQR() {
         const showQR = document.getElementById('checkQR').checked;
         const qrBox = document.getElementById('qrBox');
@@ -1213,12 +1348,14 @@
         } else if (status === 'DISEWA') {
              pricingText += `💰 ${b('HARGA SEWA: ' + val('hargaSewa'))}`;
         } else {
+             // Jual & Sewa
              if(val('hargaCoret')) pricingText += `🔻 TURUN HARGA DARI ${val('hargaCoret')}\n`;
              pricingText += `💰 ${b('HARGA JUAL: ' + val('hargaJual'))}\n`;
              pricingText += `🔑 ${b('HARGA SEWA: ' + val('hargaSewa'))}`;
         }
 
         let kprBlock = "";
+        // Only calc KPR if Selling is involved
         if(useKPR && status !== 'DISEWA') {
             let dataKPR = hitungDetailKPR(val('hargaJual'));
             if(dataKPR) {
@@ -1276,9 +1413,9 @@
         const savedTxt = localStorage.getItem('agentPro_text'); 
         if(savedTxt) { 
             const d = JSON.parse(savedTxt); 
-            if(d.nama) document.getElementById('nama').value = d.nama; 
-            if(d.hp) document.getElementById('hp').value = d.hp; 
-            if(d.kantor) document.getElementById('kantor').value = d.kantor; 
+            if(d.nama && !document.getElementById('nama').value) document.getElementById('nama').value = d.nama; 
+            if(d.hp && !document.getElementById('hp').value) document.getElementById('hp').value = d.hp; 
+            if(d.kantor && !document.getElementById('kantor').value) document.getElementById('kantor').value = d.kantor; 
             if(d.wm) document.getElementById('wmCustomText').value = d.wm; 
             if(d.theme) {
                 document.getElementById('themeColor').value = d.theme;
@@ -1293,7 +1430,8 @@
 
     function adjustBrightness(val) { 
         globalBrightness = val;
-        document.getElementById('brightVal').innerText = val;
+        document.getElementById('brightVal').innerText = val; // Show number
+        // LIVE PREVIEW: Apply filter to all grid images
         const imgs = document.querySelectorAll('.grid-item img');
         imgs.forEach(img => img.style.filter = `brightness(${val}%)`);
     }
@@ -1309,10 +1447,6 @@
     
     function setMode(m) { 
         document.getElementById('posterCanvas').className = m; 
-        // Re-apply luxury class if selected
-        const style = document.getElementById('posterStyle').value;
-        if(style === 'luxury') document.getElementById('posterCanvas').classList.add('luxury-theme');
-        
         document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); 
         document.getElementById(m === 'feed' ? 'btnFeed' : 'btnStory').classList.add('active'); 
         setTimeout(() => { autoScale(); fitAllImages(); }, 100); 
@@ -1336,7 +1470,6 @@
         navigator.clipboard.writeText(t.value).then(() => alert("Caption tersalin!")); 
     }
 
-    /* --- NEW FEATURE: SHARE API --- */
     async function sharePoster() {
         if (!navigator.share) {
             alert("Fitur Share tidak didukung di browser/desktop ini. Gunakan tombol 'Simpan HD'.");
@@ -1367,7 +1500,7 @@
 
             scaler.style.transform = origT; 
             imgs.forEach((img, i) => img.style.filter = filters[i]);
-            if(check) wm.style.display = 'flex'; // Reset for preview
+            if(check) wm.style.display = 'flex'; 
 
             canvas.toBlob(async (blob) => {
                 const file = new File([blob], "poster-property.png", { type: "image/png" });
@@ -1377,12 +1510,19 @@
                     text: document.getElementById('judul').value
                 };
 
-                if (navigator.canShare && navigator.canShare(data)) {
-                    await navigator.share(data);
-                    overlay.style.display = 'none';
-                } else {
-                    alert("Browser tidak mengizinkan share gambar ini.");
-                    overlay.style.display = 'none';
+                try {
+                    if (navigator.canShare && navigator.canShare(data)) {
+                        await navigator.share(data);
+                    } else {
+                        alert("Browser tidak mengizinkan share gambar ini.");
+                    }
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        console.error("Share error:", err);
+                        alert("Gagal membagikan gambar.");
+                    }
+                } finally {
+                    overlay.style.display = 'none'; 
                 }
             });
 
@@ -1425,7 +1565,7 @@
                 overlay.style.display = 'none';
 
                 const link = document.createElement('a');
-                link.download = `AgentPro-${document.getElementById('judul').value}.png`;
+                link.download = `AgentPro-${document.getElementById('judul').value || 'poster'}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
             }).catch(e => { 
