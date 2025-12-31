@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AgentPro v17.0 - Ultimate Stable</title>
+    <title>AgentPro v19.0 - Final UI Fix</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -17,11 +17,29 @@
             --lux-bg: #121212; --lux-gold: #d4af37; --lux-text: #f3f4f6;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; background: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; height: 100dvh; color: var(--text-main); }
-        .mobile-frame { width: 100%; max-width: 480px; background: var(--bg-body); height: 100%; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.15); }
+        
+        body { 
+            margin: 0; background: #e5e7eb; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            display: flex; justify-content: center; 
+            height: 100dvh; /* Dynamic Height fix for mobile browsers */
+            color: var(--text-main); 
+            overflow: hidden; /* Prevent body scroll */
+        }
+        
+        .mobile-frame { 
+            width: 100%; max-width: 480px; background: var(--bg-body); 
+            height: 100%; display: flex; flex-direction: column; 
+            position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.15); 
+        }
         
         /* HEADER */
-        .header { padding: 12px 15px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; z-index: 50; flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .header { 
+            padding: 12px 15px; background: rgba(255,255,255,0.95); 
+            backdrop-filter: blur(10px); display: flex; justify-content: space-between; 
+            align-items: center; z-index: 50; flex-shrink: 0; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+        }
         .header-left { display: flex; flex-direction: column; }
         .header h1 { margin: 0; font-size: 1rem; font-weight: 800; color: var(--accent); line-height: 1; }
         .header h1 span { color: var(--primary); }
@@ -30,7 +48,6 @@
         .btn-group-head { display: flex; align-items: center; gap: 8px; }
         .btn-reset { border:none; background: #fee2e2; color:#ef4444; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.9rem;}
         .btn-lic { background: #fef3c7; color: #d97706; }
-        
         .btn-buy-pro { 
             background: #25D366; color: white; border: none; padding: 6px 12px; 
             border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; 
@@ -39,11 +56,15 @@
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* CONTENT */
-        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 15px; padding-bottom: 90px; }
-        .section { display: none; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* CONTENT (SCROLLABLE AREA) */
+        .content { 
+            flex: 1; overflow-y: auto; overflow-x: hidden; 
+            padding: 15px; padding-bottom: 100px; /* Extra padding for bottom nav */
+            -webkit-overflow-scrolling: touch; 
+        }
+        .section { display: none; animation: fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .section.active { display: block; }
-        @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+        @keyframes fadeUp { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
 
         /* CARDS & FORMS */
         .card { background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -64,15 +85,14 @@
         #aiModal, #projectModal, #buyModal, #paymentModal, #userProfileModal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 250;
             display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(3px); padding: 20px; overflow-y: auto;
+            backdrop-filter: blur(3px); padding: 20px; 
         }
         #projectModal { z-index: 260; }
-
         .ai-content {
             background: #fff; width: 100%; max-width: 400px;
             border-radius: 20px; padding: 25px;
             animation: zoomIn 0.2s; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            max-height: 90vh; overflow-y: auto;
+            max-height: 85vh; overflow-y: auto; /* Fix modal height on small screens */
         }
         @keyframes zoomIn { from {transform: scale(0.9); opacity: 0;} to {transform: scale(1); opacity: 1;} }
 
@@ -88,13 +108,14 @@
         .uc-exp { font-size: 0.85rem; color: #15803d; font-weight: 600; }
         .btn-logout { background: #fee2e2; color: #ef4444; width: 100%; padding: 10px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-        /* PAYMENT & ACTIONS */
-        .pay-box { background: #f0fdf4; border: 2px dashed #4ade80; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
-        .pay-rek { font-size: 1.3rem; font-weight: 800; letter-spacing: 1px; color: #15803d; margin: 10px 0; display: block; font-family: monospace; }
-        .copy-btn { background: #fff; border: 1px solid #ddd; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; color: #555; font-weight: 600; }
+        /* ACTION BUTTONS */
         .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-share { background: #059669; margin-left:10px; flex:1; }
         .btn-ai-gen { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 10px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center; margin-top: 5px; }
+        
+        .pay-box { background: #f0fdf4; border: 2px dashed #4ade80; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
+        .pay-rek { font-size: 1.3rem; font-weight: 800; letter-spacing: 1px; color: #15803d; margin: 10px 0; display: block; font-family: monospace; }
+        .copy-btn { background: #fff; border: 1px solid #ddd; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; color: #555; font-weight: 600; }
 
         /* UPLOAD GRID */
         .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
@@ -105,7 +126,7 @@
         .img-cover { width: 100%; height: 100%; object-fit: cover; }
         
         /* POSTER CANVAS */
-        .preview-container { width: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 10px 0; overflow: hidden; }
+        .preview-container { width: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 10px 0; overflow: hidden; min-height: 480px; }
         .poster-scaler { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 2px; }
         #posterCanvas { background: #fff; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s; }
         #posterCanvas.feed { width: 360px; height: 450px; } #posterCanvas.story { width: 320px; height: 568px; }
@@ -153,7 +174,12 @@
         #posterCanvas.luxury-theme .agent-text h4 { color: #fff; } #posterCanvas.luxury-theme .agent-text p { color: #999; } #posterCanvas.luxury-theme .agent-phone { color: #eee; }
         #posterCanvas.luxury-theme .pr-label { background: linear-gradient(45deg, #d4af37, #fcd34d); color: #000; } #posterCanvas.luxury-theme .pr-val { background: #222; color: #d4af37; }
 
-        .nav-bar { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; border-top: 1px solid #eee; display: flex; z-index: 40; padding-bottom: 10px; }
+        /* NAV BAR */
+        .nav-bar { 
+            position: absolute; bottom: 0; width: 100%; height: 70px; 
+            background: #fff; border-top: 1px solid #eee; 
+            display: flex; z-index: 100; padding-bottom: 15px; 
+        }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: #9ca3af; cursor: pointer; transition: 0.2s; font-weight: 600; }
         .nav-btn.active { color: #111; } .nav-btn.active i { color: var(--primary); transform: translateY(-2px); } .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
         
@@ -235,9 +261,9 @@
             <br><button class="copy-btn" onclick="copyRek()">Salin No. Rek</button>
         </div>
         
-        <p style="font-size:0.8rem; text-align:center; color:#666; margin-bottom:15px;">
-            <div id="paymentInfo">Kode unik telah dibuat. Konfirmasi via WA untuk aktivasi.</div>
-        </p>
+        <div id="paymentInfo" style="font-size:0.8rem; text-align:center; color:#666; margin-bottom:15px;">
+            Kode unik telah dibuat. Konfirmasi via WA untuk aktivasi.
+        </div>
         
         <button class="btn-action" style="background:#25D366;" onclick="confirmWA()"><i class="fab fa-whatsapp"></i> KONFIRMASI PEMBAYARAN</button>
         <button class="btn-reset" style="width:100%; background:none; color:#999; margin-top:10px; font-size:0.8rem;" onclick="closeModal('paymentModal')">Tutup</button>
@@ -269,7 +295,7 @@
 <div class="mobile-frame">
     <div class="header">
         <div class="header-left">
-            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v17.0</span></h1>
+            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v19.0</span></h1>
             <div class="user-greet" id="userGreet" onclick="openUserProfile()" style="display:none;">
                 <i class="fas fa-user-circle"></i> <span id="headerUserName">User</span>
             </div>
@@ -278,7 +304,7 @@
             <button class="btn-buy-pro" id="btnBuy" onclick="openBuyModal()"><i class="fas fa-crown"></i> BELI PRO</button>
             <button class="btn-reset btn-lic" id="btnLicense" onclick="checkLicense()" title="Masukan Lisensi"><i class="fas fa-key"></i></button>
             <button class="btn-reset" onclick="openProjectModal()"><i class="fas fa-folder-open"></i></button>
-            <button class="btn-reset" onclick="resetForm()" title="Buat Baru / Reset"><i class="fas fa-file-alt"></i></button>
+            <button class="btn-reset" onclick="resetForm()" title="Reset / Baru"><i class="fas fa-file-alt"></i></button>
         </div>
     </div>
     <div id="toast" class="toast"><i class="fas fa-check-circle" style="color:var(--primary)"></i> Tersimpan</div>
@@ -348,7 +374,7 @@
                     </div>
                     <div class="form-group input-group-locked" style="margin-top:10px;">
                         <label>Teks Watermark</label>
-                        <input type="text" id="wmCustomText" placeholder="AGENTPRO (Default)" oninput="renderAll()" onfocus="checkProFeature(this)">
+                        <input type="text" id="wmCustomText" placeholder="AGENTPRO" oninput="renderAll()" onfocus="checkProFeature(this)">
                         <i class="fas fa-lock lock-icon" id="lockWm"></i>
                     </div>
                 </div>
@@ -618,8 +644,8 @@
 </div>
 
 <script>
-    // --- KONFIGURASI PENTING ---
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDO__v2wnUEF5V-0cQb4q_iEmd5U0LzymOcWgCILiwptWIzkV1-PjOzlUAKcHFp4Q/exec"; 
+    // --- URL GOOGLE SCRIPT ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwC_FXtkww6WnRsgIrKSVJ2fmg_IdAWJsTH-7So506Z97FQUMtib0xPUQw5r1VAfSo/exec"; 
     // ----------------------------
 
     let currentMode = 'feed';
@@ -730,7 +756,7 @@
     // --- LICENSE CHECK ---
     function checkLicense() {
         if(userLicenseStatus === 'PRO') {
-            openUserProfile(); 
+            openUserProfile(); // Show profile if already logged in
             return;
         }
         
@@ -893,6 +919,7 @@
     function handleFileSelect(event) {
         const f = event.target.files[0];
         if(f) {
+            // Check size max 5MB
             if (f.size > 5 * 1024 * 1024) {
                 alert("File terlalu besar! Max 5MB.");
                 return;
@@ -931,6 +958,8 @@
 
     function renderImages() {
         const c = document.getElementById('imgGrid');
+        
+        // Simpan elemen overlay
         const priceBadge = document.getElementById('dynamicPriceBox');
         const stamp = document.getElementById('stampDisplay');
         const wm = document.getElementById('watermarkLayer');
@@ -1117,11 +1146,7 @@
         } 
         const wmText = document.getElementById('wmTextDisplay');
         const customText = val('wmCustomText');
-        if(customText && customText.trim() !== "") {
-             wmText.innerText = customText;
-        } else {
-             wmText.innerText = "AGENTPRO";
-        }
+        if(wmText) wmText.innerText = customText ? customText : "AGENTPRO";
 
         generateQR(); // Debounced
         generateCaption();
@@ -1447,6 +1472,9 @@
     
     function setMode(m) { 
         document.getElementById('posterCanvas').className = m; 
+        const style = document.getElementById('posterStyle').value;
+        if(style === 'luxury') document.getElementById('posterCanvas').classList.add('luxury-theme');
+        
         document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); 
         document.getElementById(m === 'feed' ? 'btnFeed' : 'btnStory').classList.add('active'); 
         setTimeout(() => { autoScale(); fitAllImages(); }, 100); 
@@ -1460,8 +1488,36 @@
         if(t === 'poster') setTimeout(() => { autoScale(); fitAllImages(); }, 200); 
     }
 
-    function resetData() { 
-        if(confirm("Hapus semua data?")) { localStorage.clear(); location.reload(); } 
+    // --- RESET FUNCTION FIXED ---
+    function resetForm() { 
+        if(confirm("Reset semua data?")) { 
+            // 1. Clear text inputs (except file and checkbox)
+            const inputs = document.querySelectorAll('input:not([type=file]):not([type=checkbox]), textarea');
+            inputs.forEach(el => el.value = '');
+            
+            // 2. Reset selects to first option
+            document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+            
+            // 3. Clear Images
+            propImages = [null, null, null, null];
+            
+            // 4. Clear Custom Logo (Important)
+            officeLogoData = null;
+            document.getElementById('fileLogo').value = '';
+            
+            // 5. Reset Watermark Text to Empty (will default to AGENTPRO in render)
+            document.getElementById('wmCustomText').value = "";
+            
+            // 6. Update UI
+            updateThumbnails();
+            updateLogoUI();
+            renderImages();
+            
+            // 7. Reload Agent Profile (Name/HP) from localStorage for convenience
+            loadProfile(); 
+            
+            renderAll();
+        } 
     }
     
     function copyCaption() { 
@@ -1470,113 +1526,83 @@
         navigator.clipboard.writeText(t.value).then(() => alert("Caption tersalin!")); 
     }
 
+    // --- SHARE FUNCTION WITH FALLBACK ---
     async function sharePoster() {
-        if (!navigator.share) {
-            alert("Fitur Share tidak didukung di browser/desktop ini. Gunakan tombol 'Simpan HD'.");
+        const overlay = document.getElementById('loadingOverlay');
+        const scaler = document.getElementById('posterScaler');
+        const origT = scaler.style.transform;
+        
+        // 1. Cek Support Browser
+        if (!navigator.share || !navigator.canShare) {
+            // FALLBACK: Jika tidak support share, langsung download
+            downloadPoster();
             return;
         }
 
-        const scaler = document.getElementById('posterScaler');
-        const overlay = document.getElementById('loadingOverlay');
-        const wm = document.getElementById('watermarkLayer');
-        const check = document.getElementById('checkWatermark').checked;
-        const origT = scaler.style.transform;
-        
-        const imgs = document.querySelectorAll('.grid-item img');
-        const filters = [];
-        imgs.forEach(img => filters.push(img.style.filter));
-
         overlay.style.display = 'flex';
-        scaler.style.transform = 'none';
-        if(check) wm.style.display = 'flex';
+        scaler.style.transform = 'none'; // Reset scale temporarily
 
         try {
             const canvas = await html2canvas(document.getElementById('posterCanvas'), { 
-                scale: 3, 
-                useCORS: true, 
-                allowTaint: true,
-                backgroundColor: null 
+                scale: 3, useCORS: true, allowTaint: true, backgroundColor: null 
             });
-
-            scaler.style.transform = origT; 
-            imgs.forEach((img, i) => img.style.filter = filters[i]);
-            if(check) wm.style.display = 'flex'; 
+            
+            scaler.style.transform = origT; // Restore scale
 
             canvas.toBlob(async (blob) => {
                 const file = new File([blob], "poster-property.png", { type: "image/png" });
-                const data = {
-                    files: [file],
-                    title: 'Info Properti',
-                    text: document.getElementById('judul').value
-                };
+                const data = { files: [file], title: 'Info Properti', text: document.getElementById('judul').value };
 
                 try {
-                    if (navigator.canShare && navigator.canShare(data)) {
+                    if (navigator.canShare(data)) {
                         await navigator.share(data);
                     } else {
-                        alert("Browser tidak mengizinkan share gambar ini.");
+                        throw new Error("Not shareable");
                     }
                 } catch (err) {
                     if (err.name !== 'AbortError') {
-                        console.error("Share error:", err);
-                        alert("Gagal membagikan gambar.");
+                        // Jika share gagal teknis, fallback ke download
+                        const a = document.createElement('a');
+                        a.download = `AgentPro-${Date.now()}.png`;
+                        a.href = canvas.toDataURL();
+                        a.click();
                     }
                 } finally {
-                    overlay.style.display = 'none'; 
+                    overlay.style.display = 'none';
                 }
             });
-
         } catch (e) {
             console.error(e);
-            alert("Gagal memproses gambar untuk share.");
-            scaler.style.transform = origT; 
-            imgs.forEach((img, i) => img.style.filter = filters[i]);
+            scaler.style.transform = origT;
             overlay.style.display = 'none';
+            alert("Gagal memproses gambar.");
         }
     }
 
     function downloadPoster() {
-        const scaler = document.getElementById('posterScaler');
         const overlay = document.getElementById('loadingOverlay');
-        const wm = document.getElementById('watermarkLayer');
-        const check = document.getElementById('checkWatermark').checked;
+        const scaler = document.getElementById('posterScaler');
         const origT = scaler.style.transform;
         
-        const imgs = document.querySelectorAll('.grid-item img');
-        const filters = [];
-        imgs.forEach(img => filters.push(img.style.filter));
-
         overlay.style.display = 'flex';
-        scaler.style.transform = 'none'; 
-        
-        if(check) wm.style.display = 'flex';
-        
+        scaler.style.transform = 'none';
+
         setTimeout(() => {
             html2canvas(document.getElementById('posterCanvas'), { 
-                scale: 4, 
-                useCORS: true, 
-                allowTaint: true,
-                backgroundColor: null 
-            })
-            .then(canvas => {
-                scaler.style.transform = origT; 
-                if(check) wm.style.display = 'flex'; 
-                imgs.forEach((img, i) => img.style.filter = filters[i]);
+                scale: 4, useCORS: true, allowTaint: true, backgroundColor: null 
+            }).then(canvas => {
+                scaler.style.transform = origT;
                 overlay.style.display = 'none';
-
                 const link = document.createElement('a');
                 link.download = `AgentPro-${document.getElementById('judul').value || 'poster'}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-            }).catch(e => { 
-                alert("Gagal render. Pastikan koneksi internet stabil untuk load aset gambar."); 
-                console.error(e);
-                scaler.style.transform = origT; 
-                imgs.forEach((img, i) => img.style.filter = filters[i]);
-                if(check) wm.style.display = 'flex';
+            }).catch(e => {
+                scaler.style.transform = origT;
                 overlay.style.display = 'none';
+                alert("Gagal download.");
             });
-        }, 500); 
+        }, 300); // Sedikit delay agar UI siap
     }
 </script>
 </body>
