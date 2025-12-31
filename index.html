@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AgentPro v19.0 - Final UI Fix</title>
+    <title>AgentPro v21.0 - Multi Upload</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -17,29 +17,11 @@
             --lux-bg: #121212; --lux-gold: #d4af37; --lux-text: #f3f4f6;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        
-        body { 
-            margin: 0; background: #e5e7eb; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            display: flex; justify-content: center; 
-            height: 100dvh; /* Dynamic Height fix for mobile browsers */
-            color: var(--text-main); 
-            overflow: hidden; /* Prevent body scroll */
-        }
-        
-        .mobile-frame { 
-            width: 100%; max-width: 480px; background: var(--bg-body); 
-            height: 100%; display: flex; flex-direction: column; 
-            position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.15); 
-        }
+        body { margin: 0; background: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; height: 100dvh; color: var(--text-main); }
+        .mobile-frame { width: 100%; max-width: 480px; background: var(--bg-body); height: 100%; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.15); }
         
         /* HEADER */
-        .header { 
-            padding: 12px 15px; background: rgba(255,255,255,0.95); 
-            backdrop-filter: blur(10px); display: flex; justify-content: space-between; 
-            align-items: center; z-index: 50; flex-shrink: 0; 
-            border-bottom: 1px solid rgba(0,0,0,0.05); 
-        }
+        .header { padding: 12px 15px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; z-index: 50; flex-shrink: 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .header-left { display: flex; flex-direction: column; }
         .header h1 { margin: 0; font-size: 1rem; font-weight: 800; color: var(--accent); line-height: 1; }
         .header h1 span { color: var(--primary); }
@@ -48,6 +30,7 @@
         .btn-group-head { display: flex; align-items: center; gap: 8px; }
         .btn-reset { border:none; background: #fee2e2; color:#ef4444; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:0.9rem;}
         .btn-lic { background: #fef3c7; color: #d97706; }
+        
         .btn-buy-pro { 
             background: #25D366; color: white; border: none; padding: 6px 12px; 
             border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; 
@@ -56,15 +39,16 @@
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* CONTENT (SCROLLABLE AREA) */
-        .content { 
-            flex: 1; overflow-y: auto; overflow-x: hidden; 
-            padding: 15px; padding-bottom: 100px; /* Extra padding for bottom nav */
-            -webkit-overflow-scrolling: touch; 
-        }
-        .section { display: none; animation: fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* CONTENT */
+        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 15px; padding-bottom: 90px; }
+        .section { display: none; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .section.active { display: block; }
-        @keyframes fadeUp { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+        @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+
+        /* COPYRIGHT FOOTER */
+        .copyright {
+            text-align: center; font-size: 0.65rem; color: #9ca3af; margin-top: 30px; margin-bottom: 10px; font-weight: 500;
+        }
 
         /* CARDS & FORMS */
         .card { background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -85,20 +69,35 @@
         #aiModal, #projectModal, #buyModal, #paymentModal, #userProfileModal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 250;
             display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(3px); padding: 20px; 
+            backdrop-filter: blur(3px); padding: 20px; overflow-y: auto;
         }
         #projectModal { z-index: 260; }
+        #buyModal .ai-content { max-width: 440px; } 
+
         .ai-content {
             background: #fff; width: 100%; max-width: 400px;
             border-radius: 20px; padding: 25px;
             animation: zoomIn 0.2s; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            max-height: 85vh; overflow-y: auto; /* Fix modal height on small screens */
+            max-height: 90vh; overflow-y: auto;
         }
         @keyframes zoomIn { from {transform: scale(0.9); opacity: 0;} to {transform: scale(1); opacity: 1;} }
 
         .ai-option { background: #f3f4f6; padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; color:#333; }
         .ai-option:hover { background: #e0e7ff; color: #4338ca; }
         .ai-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* PRICING TABLE */
+        .pricing-grid { display: flex; gap: 10px; margin-top: 10px; }
+        .pricing-col { flex: 1; border: 1px solid #eee; border-radius: 12px; padding: 15px 10px; text-align: center; position: relative; background: #f9fafb; }
+        .pricing-col.pro { border: 2px solid var(--primary); background: #fff; box-shadow: 0 4px 15px rgba(255, 217, 0, 0.2); transform: scale(1.02); z-index: 2; }
+        .best-value { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #000; font-size: 0.6rem; font-weight: 800; padding: 4px 8px; border-radius: 10px; white-space: nowrap; }
+        .p-title { font-size: 0.9rem; font-weight: 800; color: #444; margin-bottom: 5px; }
+        .p-price { font-size: 1.2rem; font-weight: 900; color: #111; margin-bottom: 10px; }
+        .p-list { list-style: none; padding: 0; margin: 0 0 15px 0; text-align: left; font-size: 0.7rem; color: #666; }
+        .p-list li { margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+        .p-btn { width: 100%; padding: 8px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; border: none; }
+        .btn-free { background: #e5e7eb; color: #444; }
+        .btn-pro { background: #25D366; color: #fff; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); animation: pulse 2s infinite;}
 
         /* USER PROFILE */
         .user-card-info { text-align: center; padding-bottom: 15px; border-bottom: 1px dashed #eee; margin-bottom: 15px; }
@@ -108,14 +107,14 @@
         .uc-exp { font-size: 0.85rem; color: #15803d; font-weight: 600; }
         .btn-logout { background: #fee2e2; color: #ef4444; width: 100%; padding: 10px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-        /* ACTION BUTTONS */
-        .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-share { background: #059669; margin-left:10px; flex:1; }
-        .btn-ai-gen { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 10px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center; margin-top: 5px; }
-        
+        /* PAYMENT & ACTIONS */
         .pay-box { background: #f0fdf4; border: 2px dashed #4ade80; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
         .pay-rek { font-size: 1.3rem; font-weight: 800; letter-spacing: 1px; color: #15803d; margin: 10px 0; display: block; font-family: monospace; }
         .copy-btn { background: #fff; border: 1px solid #ddd; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; color: #555; font-weight: 600; }
+        .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-share { background: #059669; margin-left:10px; flex:1; }
+        .btn-ai-gen { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 10px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center; margin-top: 5px; }
+        .btn-bulk { background: #e0f2fe; color: #0284c7; margin-bottom: 10px; border: 1px dashed #7dd3fc; } /* New bulk button style */
 
         /* UPLOAD GRID */
         .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
@@ -126,7 +125,7 @@
         .img-cover { width: 100%; height: 100%; object-fit: cover; }
         
         /* POSTER CANVAS */
-        .preview-container { width: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 10px 0; overflow: hidden; min-height: 480px; }
+        .preview-container { width: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 10px 0; overflow: hidden; }
         .poster-scaler { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 2px; }
         #posterCanvas { background: #fff; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s; }
         #posterCanvas.feed { width: 360px; height: 450px; } #posterCanvas.story { width: 320px; height: 568px; }
@@ -174,12 +173,7 @@
         #posterCanvas.luxury-theme .agent-text h4 { color: #fff; } #posterCanvas.luxury-theme .agent-text p { color: #999; } #posterCanvas.luxury-theme .agent-phone { color: #eee; }
         #posterCanvas.luxury-theme .pr-label { background: linear-gradient(45deg, #d4af37, #fcd34d); color: #000; } #posterCanvas.luxury-theme .pr-val { background: #222; color: #d4af37; }
 
-        /* NAV BAR */
-        .nav-bar { 
-            position: absolute; bottom: 0; width: 100%; height: 70px; 
-            background: #fff; border-top: 1px solid #eee; 
-            display: flex; z-index: 100; padding-bottom: 15px; 
-        }
+        .nav-bar { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; border-top: 1px solid #eee; display: flex; z-index: 40; padding-bottom: 10px; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: #9ca3af; cursor: pointer; transition: 0.2s; font-weight: 600; }
         .nav-btn.active { color: #111; } .nav-btn.active i { color: var(--primary); transform: translateY(-2px); } .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
         
@@ -230,22 +224,58 @@
 
 <div id="buyModal" onclick="closeModal('buyModal')">
     <div class="ai-content" onclick="event.stopPropagation()">
-        <div class="ai-title">
-            <span>💎 Upgrade ke PRO</span>
-            <span onclick="closeModal('buyModal')" style="cursor:pointer;">&times;</span>
+        
+        <div id="step-pricing">
+            <div class="ai-title">
+                <span>💎 Pilih Paket</span>
+                <span onclick="closeModal('buyModal')" style="cursor:pointer;">&times;</span>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-col">
+                    <div class="p-title">STARTER</div>
+                    <div class="p-price">Rp 0</div>
+                    <ul class="p-list">
+                        <li>❌ Watermark</li>
+                        <li>❌ AI Judul</li>
+                        <li>❌ Luxury Style</li>
+                        <li>✅ Basic Edit</li>
+                    </ul>
+                    <button class="p-btn btn-free" onclick="closeModal('buyModal')">Lanjutkan</button>
+                </div>
+                
+                <div class="pricing-col pro">
+                    <div class="best-value">BEST VALUE</div>
+                    <div class="p-title">PRO MEMBER</div>
+                    <div class="p-price">Rp 50rb<span style="font-size:0.6rem; font-weight:400">/bln</span></div>
+                    <ul class="p-list">
+                        <li>✅ No Watermark</li>
+                        <li>✅ AI Auto Judul</li>
+                        <li>✅ Luxury Style</li>
+                        <li>✅ Prioritas Support</li>
+                    </ul>
+                    <button class="p-btn btn-pro" onclick="toBuyForm()">Langganan</button>
+                </div>
+            </div>
         </div>
-        <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">
-            Dapatkan akses fitur Premium: Hapus Watermark, AI Judul, Luxury Style, dan lainnya.
-        </p>
-        <div class="form-group">
-            <label>Nama Lengkap</label>
-            <input type="text" id="buyName" placeholder="Nama Anda" style="border:1px solid #ccc;">
+
+        <div id="step-form" style="display:none;">
+             <div class="ai-title">
+                <span>📝 Data Pelanggan</span>
+                <span onclick="backToPricing()" style="cursor:pointer; font-size:0.9rem; color:#666;"><i class="fas fa-arrow-left"></i></span>
+            </div>
+            <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">Silakan isi data untuk melanjutkan pembayaran.</p>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="buyName" placeholder="Nama Anda" style="border:1px solid #ccc;">
+            </div>
+            <div class="form-group">
+                <label>Nomor WhatsApp</label>
+                <input type="tel" id="buyWA" placeholder="08xxx" style="border:1px solid #ccc;">
+            </div>
+            <button class="btn-action" style="background:#25D366;" onclick="processOrder()">BELI SEKARANG</button>
         </div>
-        <div class="form-group">
-            <label>Nomor WhatsApp</label>
-            <input type="tel" id="buyWA" placeholder="08xxx" style="border:1px solid #ccc;">
-        </div>
-        <button class="btn-action" style="background:#25D366;" onclick="processOrder()">BELI SEKARANG</button>
+
     </div>
 </div>
 
@@ -295,7 +325,7 @@
 <div class="mobile-frame">
     <div class="header">
         <div class="header-left">
-            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v19.0</span></h1>
+            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v21.0</span></h1>
             <div class="user-greet" id="userGreet" onclick="openUserProfile()" style="display:none;">
                 <i class="fas fa-user-circle"></i> <span id="headerUserName">User</span>
             </div>
@@ -340,6 +370,11 @@
 
             <div class="card">
                 <div class="card-head"><i class="fas fa-images"></i> Foto Properti</div>
+                <button class="btn-action btn-bulk" onclick="document.getElementById('multiFileInput').click()">
+                    <i class="fas fa-folder-plus"></i> Upload Banyak Foto Sekaligus
+                </button>
+                <input type="file" id="multiFileInput" hidden multiple accept="image/*" onchange="handleMultiFileSelect(event)">
+                
                 <div class="upload-grid">
                     <div class="upload-box" id="box-0" onclick="triggerUpload(0)">
                         <div class="placeholder"><i class="fas fa-plus"></i>Foto Utama</div>
@@ -374,7 +409,7 @@
                     </div>
                     <div class="form-group input-group-locked" style="margin-top:10px;">
                         <label>Teks Watermark</label>
-                        <input type="text" id="wmCustomText" placeholder="AGENTPRO" oninput="renderAll()" onfocus="checkProFeature(this)">
+                        <input type="text" id="wmCustomText" placeholder="AGENTPRO (Default)" oninput="renderAll()" onfocus="checkProFeature(this)">
                         <i class="fas fa-lock lock-icon" id="lockWm"></i>
                     </div>
                 </div>
@@ -635,6 +670,8 @@
         </div>
 
     </div>
+    
+    <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
 
     <div class="nav-bar">
         <div class="nav-btn active" onclick="nav('edit', this)"><i class="fas fa-pen-nib"></i> Edit</div>
@@ -644,8 +681,8 @@
 </div>
 
 <script>
-    // --- URL GOOGLE SCRIPT ---
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwC_FXtkww6WnRsgIrKSVJ2fmg_IdAWJsTH-7So506Z97FQUMtib0xPUQw5r1VAfSo/exec"; 
+    // --- KONFIGURASI PENTING ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyDO__v2wnUEF5V-0cQb4q_iEmd5U0LzymOcWgCILiwptWIzkV1-PjOzlUAKcHFp4Q/exec"; 
     // ----------------------------
 
     let currentMode = 'feed';
@@ -698,6 +735,19 @@
     
     function openBuyModal() {
         document.getElementById('buyModal').style.display = 'flex';
+        // RESET TO STEP 1
+        document.getElementById('step-pricing').style.display = 'block';
+        document.getElementById('step-form').style.display = 'none';
+    }
+    
+    function toBuyForm() {
+        document.getElementById('step-pricing').style.display = 'none';
+        document.getElementById('step-form').style.display = 'block';
+    }
+
+    function backToPricing() {
+        document.getElementById('step-pricing').style.display = 'block';
+        document.getElementById('step-form').style.display = 'none';
     }
     
     function openUserProfile() {
@@ -914,6 +964,32 @@
     function triggerUpload(idx) {
         activeUploadSlot = idx;
         document.getElementById('fileInput').click();
+    }
+    
+    // --- MULTI UPLOAD ---
+    function handleMultiFileSelect(event) {
+        const files = event.target.files;
+        if (!files.length) return;
+        
+        // Batasi Max 4
+        const total = Math.min(files.length, 4);
+        let loaded = 0;
+        
+        for (let i = 0; i < total; i++) {
+            if (files[i].size > 5 * 1024 * 1024) { alert("File ke-" + (i+1) + " terlalu besar!"); continue; }
+            
+            const r = new FileReader();
+            r.onload = (ev) => {
+                propImages[i] = ev.target.result;
+                loaded++;
+                if (loaded === total) {
+                     updateThumbnails();
+                     renderImages();
+                }
+            };
+            r.readAsDataURL(files[i]);
+        }
+        event.target.value = ''; // Reset
     }
 
     function handleFileSelect(event) {
@@ -1146,7 +1222,14 @@
         } 
         const wmText = document.getElementById('wmTextDisplay');
         const customText = val('wmCustomText');
-        if(wmText) wmText.innerText = customText ? customText : "AGENTPRO";
+        
+        // --- FINAL FIX WATERMARK ---
+        // Jika kosong, kembali ke default AGENTPRO
+        if(customText && customText.trim() !== "") {
+             wmText.innerText = customText;
+        } else {
+             wmText.innerText = "AGENTPRO";
+        }
 
         generateQR(); // Debounced
         generateCaption();
@@ -1472,9 +1555,6 @@
     
     function setMode(m) { 
         document.getElementById('posterCanvas').className = m; 
-        const style = document.getElementById('posterStyle').value;
-        if(style === 'luxury') document.getElementById('posterCanvas').classList.add('luxury-theme');
-        
         document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); 
         document.getElementById(m === 'feed' ? 'btnFeed' : 'btnStory').classList.add('active'); 
         setTimeout(() => { autoScale(); fitAllImages(); }, 100); 
