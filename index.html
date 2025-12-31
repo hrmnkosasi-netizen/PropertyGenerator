@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AgentPro v21.0 - Multi Upload</title>
+    <title>AgentPro v21.5 - Final Copyright Fix</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@
 
         /* COPYRIGHT FOOTER */
         .copyright {
-            text-align: center; font-size: 0.65rem; color: #9ca3af; margin-top: 30px; margin-bottom: 10px; font-weight: 500;
+            text-align: center; font-size: 0.65rem; color: #9ca3af; margin-top: 30px; margin-bottom: 20px; font-weight: 500;
         }
 
         /* CARDS & FORMS */
@@ -325,7 +325,7 @@
 <div class="mobile-frame">
     <div class="header">
         <div class="header-left">
-            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v21.0</span></h1>
+            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v21.5</span></h1>
             <div class="user-greet" id="userGreet" onclick="openUserProfile()" style="display:none;">
                 <i class="fas fa-user-circle"></i> <span id="headerUserName">User</span>
             </div>
@@ -548,6 +548,7 @@
                     <input type="file" id="fileLogo" hidden accept="image/*" onchange="handleLogoSelect(event)">
                 </div>
             </div>
+            <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
         </div>
 
         <div id="tab-poster" class="section">
@@ -635,6 +636,7 @@
                 <button class="btn-action" onclick="downloadPoster()" style="flex:1"><i class="fas fa-download"></i> Simpan HD</button>
                 <button class="btn-action btn-share" onclick="sharePoster()"><i class="fas fa-share-alt"></i> Share</button>
             </div>
+            <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
         </div>
 
         <div id="tab-caption" class="section">
@@ -667,11 +669,10 @@
                 <textarea id="finalCaption" rows="18" readonly style="background:#fff; border:1px solid #eee; font-family:monospace; font-size:0.8rem;"></textarea>
                 <button onclick="copyCaption()" class="btn-action" style="margin-top:15px; background:#333; font-size:0.8rem; padding:10px;"><i class="fas fa-copy"></i> Salin Teks</button>
             </div>
+            <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
         </div>
 
     </div>
-    
-    <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
 
     <div class="nav-bar">
         <div class="nav-btn active" onclick="nav('edit', this)"><i class="fas fa-pen-nib"></i> Edit</div>
@@ -1222,14 +1223,7 @@
         } 
         const wmText = document.getElementById('wmTextDisplay');
         const customText = val('wmCustomText');
-        
-        // --- FINAL FIX WATERMARK ---
-        // Jika kosong, kembali ke default AGENTPRO
-        if(customText && customText.trim() !== "") {
-             wmText.innerText = customText;
-        } else {
-             wmText.innerText = "AGENTPRO";
-        }
+        if(wmText) wmText.innerText = customText ? customText : "AGENTPRO";
 
         generateQR(); // Debounced
         generateCaption();
@@ -1555,6 +1549,9 @@
     
     function setMode(m) { 
         document.getElementById('posterCanvas').className = m; 
+        const style = document.getElementById('posterStyle').value;
+        if(style === 'luxury') document.getElementById('posterCanvas').classList.add('luxury-theme');
+        
         document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); 
         document.getElementById(m === 'feed' ? 'btnFeed' : 'btnStory').classList.add('active'); 
         setTimeout(() => { autoScale(); fitAllImages(); }, 100); 
