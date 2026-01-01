@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AgentPro v21.5 - Final Copyright Fix</title>
+    <title>AgentPro v23.0 - Super Reels & AI</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -46,9 +46,7 @@
         @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
 
         /* COPYRIGHT FOOTER */
-        .copyright {
-            text-align: center; font-size: 0.65rem; color: #9ca3af; margin-top: 30px; margin-bottom: 20px; font-weight: 500;
-        }
+        .copyright { text-align: center; font-size: 0.65rem; color: #9ca3af; margin-top: 30px; margin-bottom: 20px; font-weight: 500; }
 
         /* CARDS & FORMS */
         .card { background: var(--bg-card); padding: 15px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -60,13 +58,12 @@
         input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid transparent; border-radius: 10px; font-size: 0.9rem; font-family: inherit; font-weight: 500; background: #f9fafb; color: var(--text-main); transition: 0.2s; }
         input:focus, select:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,0,0, 0.1); }
         .hidden-input { display: none; }
-        
         .pro-locked { position: relative; opacity: 0.6; pointer-events: none; filter: grayscale(1); }
         .input-group-locked { position: relative; }
         .lock-icon { position: absolute; right: 10px; top: 35px; color: #d97706; font-size: 0.9rem; z-index: 10; background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #eee; }
 
         /* MODALS */
-        #aiModal, #projectModal, #buyModal, #paymentModal, #userProfileModal {
+        #aiModal, #projectModal, #buyModal, #paymentModal, #userProfileModal, #reelsModal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 250;
             display: none; align-items: center; justify-content: center;
             backdrop-filter: blur(3px); padding: 20px; overflow-y: auto;
@@ -107,14 +104,15 @@
         .uc-exp { font-size: 0.85rem; color: #15803d; font-weight: 600; }
         .btn-logout { background: #fee2e2; color: #ef4444; width: 100%; padding: 10px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-        /* PAYMENT & ACTIONS */
+        /* ACTION BUTTONS */
         .pay-box { background: #f0fdf4; border: 2px dashed #4ade80; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; }
         .pay-rek { font-size: 1.3rem; font-weight: 800; letter-spacing: 1px; color: #15803d; margin: 10px 0; display: block; font-family: monospace; }
         .copy-btn { background: #fff; border: 1px solid #ddd; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; color: #555; font-weight: 600; }
         .btn-action { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-share { background: #059669; margin-left:10px; flex:1; }
         .btn-ai-gen { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 10px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center; margin-top: 5px; }
-        .btn-bulk { background: #e0f2fe; color: #0284c7; margin-bottom: 10px; border: 1px dashed #7dd3fc; } /* New bulk button style */
+        .btn-bulk { background: #e0f2fe; color: #0284c7; margin-bottom: 10px; border: 1px dashed #7dd3fc; }
+        .btn-magic { background: linear-gradient(135deg, #ec4899, #8b5cf6); color: white; margin-top:15px; }
 
         /* UPLOAD GRID */
         .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
@@ -124,7 +122,7 @@
         .upload-box .del-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); color: white; width: 24px; height: 24px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 0.8rem; z-index: 5; } .upload-box.has-img .del-btn { display: flex; }
         .img-cover { width: 100%; height: 100%; object-fit: cover; }
         
-        /* POSTER CANVAS */
+        /* POSTER & CANVAS */
         .preview-container { width: 100%; display: flex; justify-content: center; align-items: flex-start; padding: 10px 0; overflow: hidden; }
         .poster-scaler { transform-origin: top center; transition: transform 0.3s ease; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 2px; }
         #posterCanvas { background: #fff; overflow: hidden; position: relative; display: flex; flex-direction: column; transition: background 0.3s; }
@@ -163,6 +161,7 @@
         .agent-phone { font-size: 0.7rem; color: #111; font-weight: 700; display: flex; align-items: center; gap: 4px; margin-top: 1px; } .agent-phone i { color: #25D366; }
         .qr-wrapper { width: 38px; height: 38px; padding: 2px; border: 1px solid #eee; border-radius: 4px; background:#fff; flex-shrink: 0;} .qr-wrapper img { width: 100%; height: 100%; object-fit: contain; }
 
+        /* LUXURY THEME */
         #posterCanvas.luxury-theme .canvas-info-area { background: var(--lux-bg); color: var(--lux-text); }
         #posterCanvas.luxury-theme .canvas-img-area { background: var(--lux-bg); }
         #posterCanvas.luxury-theme .info-title { color: #fff; font-family: 'Playfair Display', serif; letter-spacing: 0.5px; }
@@ -173,6 +172,13 @@
         #posterCanvas.luxury-theme .agent-text h4 { color: #fff; } #posterCanvas.luxury-theme .agent-text p { color: #999; } #posterCanvas.luxury-theme .agent-phone { color: #eee; }
         #posterCanvas.luxury-theme .pr-label { background: linear-gradient(45deg, #d4af37, #fcd34d); color: #000; } #posterCanvas.luxury-theme .pr-val { background: #222; color: #d4af37; }
 
+        /* REELS TAB */
+        .reels-container { text-align: center; padding: 30px 20px; background: #fff; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .reels-icon { font-size: 3rem; color: var(--primary); margin-bottom: 15px; }
+        .reels-desc { font-size: 0.85rem; color: #666; margin-bottom: 20px; line-height: 1.5; }
+        #reelsPreview { width: 100%; max-width: 240px; aspect-ratio: 9/16; background: #000; margin: 0 auto 15px auto; border-radius: 12px; display: none; }
+
+        /* NAVBAR */
         .nav-bar { position: absolute; bottom: 0; width: 100%; height: 70px; background: #fff; border-top: 1px solid #eee; display: flex; z-index: 40; padding-bottom: 10px; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; color: #9ca3af; cursor: pointer; transition: 0.2s; font-weight: 600; }
         .nav-btn.active { color: #111; } .nav-btn.active i { color: var(--primary); transform: translateY(-2px); } .nav-btn i { font-size: 1.2rem; margin-bottom: 4px; }
@@ -192,7 +198,7 @@
 
 <div id="loadingOverlay">
     <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-    <div style="font-weight: 600;">Memproses...</div>
+    <div style="font-weight: 600;" id="loadingText">Memproses...</div>
 </div>
 
 <div id="aiModal" onclick="closeModal('aiModal')">
@@ -325,7 +331,7 @@
 <div class="mobile-frame">
     <div class="header">
         <div class="header-left">
-            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v21.5</span></h1>
+            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v23.0</span></h1>
             <div class="user-greet" id="userGreet" onclick="openUserProfile()" style="display:none;">
                 <i class="fas fa-user-circle"></i> <span id="headerUserName">User</span>
             </div>
@@ -548,6 +554,7 @@
                     <input type="file" id="fileLogo" hidden accept="image/*" onchange="handleLogoSelect(event)">
                 </div>
             </div>
+            
             <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
         </div>
 
@@ -639,6 +646,17 @@
             <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
         </div>
 
+        <div id="tab-reels" class="section">
+            <div class="reels-container">
+                 <div class="reels-icon"><i class="fas fa-video"></i></div>
+                 <h3 style="margin:0 0 10px 0;">Buat Video Reels</h3>
+                 <p class="reels-desc">Video slideshow 9:16 dengan Overlay Judul, Harga & Detail Agent. Siap posting ke TikTok/Instagram.</p>
+                 <video id="reelsPreview" controls playsinline></video>
+                 <button class="btn-action" style="background:#E1306C;" onclick="generateReels()"><i class="fas fa-play-circle"></i> Mulai Render Video</button>
+            </div>
+             <div class="copyright">© 2025 AgentPro Tools. Created by Herman Kosasi</div>
+        </div>
+
         <div id="tab-caption" class="section">
             <div class="card">
                 <div class="card-head"><i class="fas fa-robot"></i> Smart Generator</div>
@@ -665,7 +683,9 @@
                         🏦 Gunakan Hasil Hitungan KPR Manual
                     </label>
                 </div>
-                <div class="card-head" style="margin-top:15px;"><i class="fas fa-align-left"></i> Hasil Caption</div>
+                <button class="btn-ai-gen btn-magic" onclick="rewriteCaptionAI()"><i class="fas fa-sparkles"></i> ✨ Magic Rewrite (Ganti Gaya & Emoji)</button>
+                
+                <div class="card-head" style="margin-top:20px;"><i class="fas fa-align-left"></i> Hasil Caption</div>
                 <textarea id="finalCaption" rows="18" readonly style="background:#fff; border:1px solid #eee; font-family:monospace; font-size:0.8rem;"></textarea>
                 <button onclick="copyCaption()" class="btn-action" style="margin-top:15px; background:#333; font-size:0.8rem; padding:10px;"><i class="fas fa-copy"></i> Salin Teks</button>
             </div>
@@ -677,6 +697,7 @@
     <div class="nav-bar">
         <div class="nav-btn active" onclick="nav('edit', this)"><i class="fas fa-pen-nib"></i> Edit</div>
         <div class="nav-btn" onclick="nav('poster', this)"><i class="fas fa-image"></i> Poster</div>
+        <div class="nav-btn" onclick="nav('reels', this)"><i class="fas fa-video"></i> Reels</div>
         <div class="nav-btn" onclick="nav('caption', this)"><i class="fas fa-magic"></i> Caption</div>
     </div>
 </div>
@@ -958,7 +979,7 @@
     function selectAIHeadline(text) {
         document.getElementById('judul').value = text;
         renderAll();
-        closeAIModal('aiModal');
+        closeModal('aiModal');
     }
 
     // --- UPLOAD & RENDER ---
@@ -984,8 +1005,8 @@
                 propImages[i] = ev.target.result;
                 loaded++;
                 if (loaded === total) {
-                     updateThumbnails();
-                     renderImages();
+                      updateThumbnails();
+                      renderImages();
                 }
             };
             r.readAsDataURL(files[i]);
@@ -1286,14 +1307,14 @@
         let html = '';
         projects.forEach((p, index) => {
             html += `
-            <div class="proj-item">
+            <div class="proj-item" style="border-bottom:1px solid #eee; padding:10px 0; display:flex; justify-content:space-between; align-items:center;">
                 <div class="proj-info">
-                    <div class="proj-name">${p.name}</div>
-                    <div class="proj-date">${p.date}</div>
+                    <div style="font-weight:700; font-size:0.9rem;">${p.name}</div>
+                    <div style="font-size:0.65rem; color:#888;">${p.date}</div>
                 </div>
                 <div class="proj-actions">
-                    <button class="btn-sm btn-load" onclick="loadProject(${p.id})">Load</button>
-                    <button class="btn-sm btn-del" onclick="deleteProject(${p.id})">Hapus</button>
+                    <button style="background:#dbeafe; color:#1e40af; border:none; padding:4px 8px; border-radius:5px; font-size:0.7rem; cursor:pointer;" onclick="loadProject(${p.id})">Load</button>
+                    <button style="background:#fee2e2; color:#b91c1c; border:none; padding:4px 8px; border-radius:5px; font-size:0.7rem; cursor:pointer;" onclick="deleteProject(${p.id})">Hapus</button>
                 </div>
             </div>`;
         });
@@ -1450,14 +1471,12 @@
         } else if (status === 'DISEWA') {
              pricingText += `💰 ${b('HARGA SEWA: ' + val('hargaSewa'))}`;
         } else {
-             // Jual & Sewa
              if(val('hargaCoret')) pricingText += `🔻 TURUN HARGA DARI ${val('hargaCoret')}\n`;
              pricingText += `💰 ${b('HARGA JUAL: ' + val('hargaJual'))}\n`;
              pricingText += `🔑 ${b('HARGA SEWA: ' + val('hargaSewa'))}`;
         }
 
         let kprBlock = "";
-        // Only calc KPR if Selling is involved
         if(useKPR && status !== 'DISEWA') {
             let dataKPR = hitungDetailKPR(val('hargaJual'));
             if(dataKPR) {
@@ -1500,6 +1519,246 @@
         c += `${nl}${nl}${tags}`;
         document.getElementById('finalCaption').value = c;
     }
+
+    function rewriteCaptionAI() {
+        if(userLicenseStatus !== 'PRO') {
+            alert("🔒 AI Rewrite hanya untuk PRO Member!");
+            return;
+        }
+
+        // RESET: Generate ulang caption dasar agar tidak menumpuk emoji
+        generateCaption(); 
+        const currentText = document.getElementById('finalCaption').value;
+        let newText = currentText;
+        
+        // Pilih gaya acak
+        const styles = ['emoji-heavy', 'persuasive', 'urgent'];
+        const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+
+        const emojiMap = {
+            'RUMAH': '🏠', 'RUKO': '🏢', 'TANAH': '⛳', 'APARTEMEN': '🏢', 
+            'DIJUAL': '🔥', 'DISEWA': '🔑', 'JAKARTA': '🌆', 'BSD': '🌳',
+            'SHM': '✅', 'LT': '📐', 'KT': '🛏️', 'KM': '🚿', 'GARASI': '🚗',
+            'HARGA': '💰', 'LOKASI': '📍', 'HUBUNGI': '📞'
+        };
+        
+        if (randomStyle === 'emoji-heavy') {
+            for (const [key, icon] of Object.entries(emojiMap)) {
+                const regex = new RegExp(key, 'gi');
+                // Hindari double emoji jika sudah ada
+                if (!newText.includes(icon)) {
+                    newText = newText.replace(regex, `${icon} ${key}`);
+                }
+            }
+        } else if (randomStyle === 'urgent') {
+             newText = "⚠️ BUTUH CEPAT LAKU! ⚠️\n\n" + newText.replace("DIJUAL", "DIJUAL CEPAT (BU)");
+        }
+
+        document.getElementById('finalCaption').value = newText;
+        alert("✨ Caption berhasil ditulis ulang dengan gaya: " + randomStyle.toUpperCase());
+    }
+
+    // --- REELS GENERATOR (UPGRADED) ---
+    let mediaRecorder;
+    let recordedChunks = [];
+
+    async function generateReels() {
+        const preview = document.getElementById('reelsPreview');
+        const activeImages = propImages.filter(i => i !== null);
+        
+        if(activeImages.length < 2) {
+            alert("Upload minimal 2 foto untuk membuat Reels!");
+            return;
+        }
+
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        document.getElementById('loadingText').innerText = "Merender Video HD...";
+        
+        // Setup Canvas 9:16 (High Resolution)
+        const canvas = document.createElement('canvas');
+        canvas.width = 720;
+        canvas.height = 1280;
+        const ctx = canvas.getContext('2d');
+        
+        const stream = canvas.captureStream(30); 
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+        
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) recordedChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            preview.src = URL.createObjectURL(blob);
+            preview.style.display = 'block';
+            document.getElementById('loadingOverlay').style.display = 'none';
+            
+            // Auto Download
+            const a = document.createElement('a');
+            a.href = preview.src;
+            a.download = `AgentPro-Reels-${Date.now()}.webm`;
+            a.click();
+        };
+
+        mediaRecorder.start();
+
+        // Load Asset
+        const logo = new Image();
+        if(localStorage.getItem('agentPro_img')) {
+             logo.src = localStorage.getItem('agentPro_img');
+             await new Promise(r => logo.onload = r).catch(()=>console.log("No Agent Img"));
+        }
+
+        const durationPerSlide = 2500; 
+        const totalSlides = activeImages.length;
+        const val = (id) => document.getElementById(id).value;
+        
+        for (let i = 0; i < totalSlides; i++) {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = activeImages[i];
+            await new Promise(r => img.onload = r);
+            
+            const startTime = Date.now();
+            while (Date.now() - startTime < durationPerSlide) {
+                const elapsed = Date.now() - startTime;
+                
+                // Ken Burns Effect (Zoom In)
+                const zoom = 1 + (elapsed / durationPerSlide) * 0.15; 
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(canvas.width/2, canvas.height/2);
+                ctx.scale(zoom, zoom);
+                ctx.translate(-canvas.width/2, -canvas.height/2);
+                
+                // Draw Image Cover
+                const hRatio = canvas.width / img.width;
+                const vRatio = canvas.height / img.height;
+                const ratio = Math.max(hRatio, vRatio);
+                const centerShift_x = (canvas.width - img.width * ratio) / 2;
+                const centerShift_y = (canvas.height - img.height * ratio) / 2;
+                ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+                ctx.restore();
+                
+                // --- OVERLAY KEREN ---
+                // Gradient Bawah
+                const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - 600);
+                gradient.addColorStop(0, "rgba(0,0,0,0.95)");
+                gradient.addColorStop(1, "rgba(0,0,0,0)");
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, canvas.height - 600, canvas.width, 600);
+                
+                // Gradient Atas (untuk teks agen)
+                const gradTop = ctx.createLinearGradient(0, 0, 0, 150);
+                gradTop.addColorStop(0, "rgba(0,0,0,0.7)");
+                gradTop.addColorStop(1, "rgba(0,0,0,0)");
+                ctx.fillStyle = gradTop;
+                ctx.fillRect(0, 0, canvas.width, 150);
+
+                // TEXT INFO
+                ctx.textAlign = "left";
+                
+                // Tipe Property
+                ctx.fillStyle = "#FFD900";
+                ctx.font = "bold 24px sans-serif";
+                ctx.fillText(val('tipeProp') + " | " + val('status'), 40, canvas.height - 350);
+                
+                // Judul (Wrap Text)
+                ctx.fillStyle = "#fff";
+                ctx.font = "800 42px sans-serif";
+                wrapText(ctx, val('judul').toUpperCase(), 40, canvas.height - 300, 640, 50);
+
+                // Harga
+                ctx.fillStyle = "#FFD900";
+                ctx.font = "900 56px sans-serif";
+                ctx.fillText("IDR " + val('hargaJual'), 40, canvas.height - 180);
+                
+                // Icons (LT, LB, KT, KM)
+                drawSpecIcon(ctx, "📐 LT " + val('lt'), 40, canvas.height - 100);
+                drawSpecIcon(ctx, "🏠 LB " + val('lb'), 180, canvas.height - 100);
+                drawSpecIcon(ctx, "🛏️ " + val('kt'), 320, canvas.height - 100);
+                drawSpecIcon(ctx, "🚿 " + val('km'), 420, canvas.height - 100);
+
+                // AGENT BADGE (Top Left)
+                if(logo.src) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(70, 70, 40, 0, Math.PI * 2, true);
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(logo, 30, 30, 80, 80);
+                    ctx.restore();
+                    // Border Agent
+                    ctx.beginPath();
+                    ctx.arc(70, 70, 40, 0, Math.PI * 2, true);
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = "#FFD900";
+                    ctx.stroke();
+                }
+                
+                // Agent Text
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 28px sans-serif";
+                ctx.fillText(val('nama'), 130, 65);
+                ctx.font = "20px sans-serif";
+                ctx.fillStyle = "#ccc";
+                ctx.fillText(val('hp'), 130, 95);
+
+                await new Promise(r => requestAnimationFrame(r));
+            }
+        }
+        
+        mediaRecorder.stop();
+    }
+    
+    // Helper Wrap Text Canvas
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        var words = text.split(' ');
+        var line = '';
+        var limit = 2; // Max lines
+        var lineCount = 0;
+
+        for(var n = 0; n < words.length; n++) {
+          var testLine = line + words[n] + ' ';
+          var metrics = ctx.measureText(testLine);
+          var testWidth = metrics.width;
+          if (testWidth > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+            lineCount++;
+            if(lineCount >= limit) return; 
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, x, y);
+    }
+    
+    function drawSpecIcon(ctx, text, x, y) {
+        ctx.fillStyle = "rgba(255,255,255,0.2)";
+        ctx.roundRect(x, y - 30, 120, 45, 10); // Chrome supported
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 20px sans-serif";
+        ctx.fillText(text, x + 10, y);
+    }
+    
+    // Polyfill roundRect simple
+    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+      if (w < 2 * r) r = w / 2;
+      if (h < 2 * r) r = h / 2;
+      this.beginPath();
+      this.moveTo(x+r, y);
+      this.arcTo(x+w, y,   x+w, y+h, r);
+      this.arcTo(x+w, y+h, x,   y+h, r);
+      this.arcTo(x,   y+h, x,   y,   r);
+      this.arcTo(x,   y,   x+w, y,   r);
+      this.closePath();
+      return this;
+    }
+
 
     function loadAgentImg(e) { 
         const f = e.target.files[0]; 
@@ -1565,34 +1824,15 @@
         if(t === 'poster') setTimeout(() => { autoScale(); fitAllImages(); }, 200); 
     }
 
-    // --- RESET FUNCTION FIXED ---
     function resetForm() { 
-        if(confirm("Reset semua data?")) { 
-            // 1. Clear text inputs (except file and checkbox)
+        if(confirm("Buat listing baru? Semua input akan dihapus.")) { 
             const inputs = document.querySelectorAll('input:not([type=file]):not([type=checkbox]), textarea');
             inputs.forEach(el => el.value = '');
-            
-            // 2. Reset selects to first option
             document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
-            
-            // 3. Clear Images
             propImages = [null, null, null, null];
-            
-            // 4. Clear Custom Logo (Important)
-            officeLogoData = null;
-            document.getElementById('fileLogo').value = '';
-            
-            // 5. Reset Watermark Text to Empty (will default to AGENTPRO in render)
-            document.getElementById('wmCustomText').value = "";
-            
-            // 6. Update UI
             updateThumbnails();
-            updateLogoUI();
             renderImages();
-            
-            // 7. Reload Agent Profile (Name/HP) from localStorage for convenience
             loadProfile(); 
-            
             renderAll();
         } 
     }
@@ -1603,83 +1843,113 @@
         navigator.clipboard.writeText(t.value).then(() => alert("Caption tersalin!")); 
     }
 
-    // --- SHARE FUNCTION WITH FALLBACK ---
     async function sharePoster() {
-        const overlay = document.getElementById('loadingOverlay');
-        const scaler = document.getElementById('posterScaler');
-        const origT = scaler.style.transform;
-        
-        // 1. Cek Support Browser
-        if (!navigator.share || !navigator.canShare) {
-            // FALLBACK: Jika tidak support share, langsung download
-            downloadPoster();
+        if (!navigator.share) {
+            alert("Fitur Share tidak didukung di browser/desktop ini. Gunakan tombol 'Simpan HD'.");
             return;
         }
 
+        const scaler = document.getElementById('posterScaler');
+        const overlay = document.getElementById('loadingOverlay');
+        const wm = document.getElementById('watermarkLayer');
+        const check = document.getElementById('checkWatermark').checked;
+        const origT = scaler.style.transform;
+        
+        const imgs = document.querySelectorAll('.grid-item img');
+        const filters = [];
+        imgs.forEach(img => filters.push(img.style.filter));
+
         overlay.style.display = 'flex';
-        scaler.style.transform = 'none'; // Reset scale temporarily
+        scaler.style.transform = 'none';
+        if(check) wm.style.display = 'flex';
 
         try {
             const canvas = await html2canvas(document.getElementById('posterCanvas'), { 
-                scale: 3, useCORS: true, allowTaint: true, backgroundColor: null 
+                scale: 3, 
+                useCORS: true, 
+                allowTaint: true,
+                backgroundColor: null 
             });
-            
-            scaler.style.transform = origT; // Restore scale
+
+            scaler.style.transform = origT; 
+            imgs.forEach((img, i) => img.style.filter = filters[i]);
+            if(check) wm.style.display = 'flex'; 
 
             canvas.toBlob(async (blob) => {
                 const file = new File([blob], "poster-property.png", { type: "image/png" });
-                const data = { files: [file], title: 'Info Properti', text: document.getElementById('judul').value };
+                const data = {
+                    files: [file],
+                    title: 'Info Properti',
+                    text: document.getElementById('judul').value
+                };
 
                 try {
-                    if (navigator.canShare(data)) {
+                    if (navigator.canShare && navigator.canShare(data)) {
                         await navigator.share(data);
                     } else {
-                        throw new Error("Not shareable");
+                        alert("Browser tidak mengizinkan share gambar ini.");
                     }
                 } catch (err) {
                     if (err.name !== 'AbortError') {
-                        // Jika share gagal teknis, fallback ke download
-                        const a = document.createElement('a');
-                        a.download = `AgentPro-${Date.now()}.png`;
-                        a.href = canvas.toDataURL();
-                        a.click();
+                        console.error("Share error:", err);
+                        alert("Gagal membagikan gambar.");
                     }
                 } finally {
-                    overlay.style.display = 'none';
+                    overlay.style.display = 'none'; 
                 }
             });
+
         } catch (e) {
             console.error(e);
-            scaler.style.transform = origT;
+            alert("Gagal memproses gambar untuk share.");
+            scaler.style.transform = origT; 
+            imgs.forEach((img, i) => img.style.filter = filters[i]);
             overlay.style.display = 'none';
-            alert("Gagal memproses gambar.");
         }
     }
 
     function downloadPoster() {
-        const overlay = document.getElementById('loadingOverlay');
         const scaler = document.getElementById('posterScaler');
+        const overlay = document.getElementById('loadingOverlay');
+        const wm = document.getElementById('watermarkLayer');
+        const check = document.getElementById('checkWatermark').checked;
         const origT = scaler.style.transform;
         
-        overlay.style.display = 'flex';
-        scaler.style.transform = 'none';
+        const imgs = document.querySelectorAll('.grid-item img');
+        const filters = [];
+        imgs.forEach(img => filters.push(img.style.filter));
 
+        overlay.style.display = 'flex';
+        scaler.style.transform = 'none'; 
+        
+        if(check) wm.style.display = 'flex';
+        
         setTimeout(() => {
             html2canvas(document.getElementById('posterCanvas'), { 
-                scale: 4, useCORS: true, allowTaint: true, backgroundColor: null 
-            }).then(canvas => {
-                scaler.style.transform = origT;
+                scale: 4, 
+                useCORS: true, 
+                allowTaint: true,
+                backgroundColor: null 
+            })
+            .then(canvas => {
+                scaler.style.transform = origT; 
+                if(check) wm.style.display = 'flex'; 
+                imgs.forEach((img, i) => img.style.filter = filters[i]);
                 overlay.style.display = 'none';
+
                 const link = document.createElement('a');
                 link.download = `AgentPro-${document.getElementById('judul').value || 'poster'}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-            }).catch(e => {
-                scaler.style.transform = origT;
+            }).catch(e => { 
+                alert("Gagal render. Pastikan koneksi internet stabil untuk load aset gambar."); 
+                console.error(e);
+                scaler.style.transform = origT; 
+                imgs.forEach((img, i) => img.style.filter = filters[i]);
+                if(check) wm.style.display = 'flex';
                 overlay.style.display = 'none';
-                alert("Gagal download.");
             });
-        }, 300); // Sedikit delay agar UI siap
+        }, 500); 
     }
 </script>
 </body>
