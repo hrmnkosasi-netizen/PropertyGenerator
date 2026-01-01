@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AgentPro v23.0 - Super Reels & AI</title>
+    <title>AgentPro v25.0 - Full Specs Reels</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
@@ -331,7 +331,7 @@
 <div class="mobile-frame">
     <div class="header">
         <div class="header-left">
-            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v23.0</span></h1>
+            <h1>Agent<span>Pro</span> <span style="font-size:0.6rem; color:#999;">v25.0</span></h1>
             <div class="user-greet" id="userGreet" onclick="openUserProfile()" style="display:none;">
                 <i class="fas fa-user-circle"></i> <span id="headerUserName">User</span>
             </div>
@@ -1558,9 +1558,38 @@
         alert("✨ Caption berhasil ditulis ulang dengan gaya: " + randomStyle.toUpperCase());
     }
 
-    // --- REELS GENERATOR (UPGRADED) ---
+    // --- REELS GENERATOR (UPGRADED DINAMIS) ---
     let mediaRecorder;
     let recordedChunks = [];
+    
+    // --- HELPER BARU: DRAW ICON DINAMIS ---
+    function drawSpecIcon(ctx, text, x, y) {
+        if (!text || text.includes('null') || text.endsWith(' ')) return 0; // Cek jika data kosong
+
+        ctx.font = "bold 22px sans-serif";
+        const padding = 20;
+        const textMetrics = ctx.measureText(text);
+        const boxWidth = textMetrics.width + (padding * 2);
+        const boxHeight = 50;
+        
+        // Gambar Kotak Background Transparan
+        ctx.fillStyle = "rgba(255,255,255,0.25)";
+        
+        // Polyfill untuk roundRect
+        if (ctx.roundRect) {
+            ctx.beginPath();
+            ctx.roundRect(x, y - 35, boxWidth, boxHeight, 12);
+            ctx.fill();
+        } else {
+            ctx.fillRect(x, y - 35, boxWidth, boxHeight);
+        }
+        
+        // Gambar Teks
+        ctx.fillStyle = "#fff";
+        ctx.fillText(text, x + padding, y);
+        
+        return boxWidth + 15; // Kembalikan lebar kotak + jarak antar kotak (gap 15px)
+    }
 
     async function generateReels() {
         const preview = document.getElementById('reelsPreview');
@@ -1624,7 +1653,7 @@
                 const elapsed = Date.now() - startTime;
                 
                 // Ken Burns Effect (Zoom In)
-                const zoom = 1 + (elapsed / durationPerSlide) * 0.15; 
+                const zoom = 1 + (elapsed / durationPerSlide) * 0.10; 
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.save();
@@ -1643,42 +1672,68 @@
                 
                 // --- OVERLAY KEREN ---
                 // Gradient Bawah
-                const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - 600);
+                const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - 700);
                 gradient.addColorStop(0, "rgba(0,0,0,0.95)");
+                gradient.addColorStop(0.6, "rgba(0,0,0,0.5)");
                 gradient.addColorStop(1, "rgba(0,0,0,0)");
                 ctx.fillStyle = gradient;
-                ctx.fillRect(0, canvas.height - 600, canvas.width, 600);
+                ctx.fillRect(0, canvas.height - 700, canvas.width, 700);
                 
                 // Gradient Atas (untuk teks agen)
-                const gradTop = ctx.createLinearGradient(0, 0, 0, 150);
-                gradTop.addColorStop(0, "rgba(0,0,0,0.7)");
+                const gradTop = ctx.createLinearGradient(0, 0, 0, 200);
+                gradTop.addColorStop(0, "rgba(0,0,0,0.8)");
                 gradTop.addColorStop(1, "rgba(0,0,0,0)");
                 ctx.fillStyle = gradTop;
-                ctx.fillRect(0, 0, canvas.width, 150);
+                ctx.fillRect(0, 0, canvas.width, 200);
 
                 // TEXT INFO
                 ctx.textAlign = "left";
                 
-                // Tipe Property
+                // Shadow agar teks terbaca jelas
+                ctx.shadowColor = "rgba(0,0,0,0.8)";
+                ctx.shadowBlur = 10;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
+
+                // Tipe Property - NAIK LAGI POSISINYA
                 ctx.fillStyle = "#FFD900";
-                ctx.font = "bold 24px sans-serif";
-                ctx.fillText(val('tipeProp') + " | " + val('status'), 40, canvas.height - 350);
+                ctx.font = "bold 26px sans-serif";
+                ctx.fillText((val('tipeProp') + " | " + val('status')).toUpperCase(), 40, canvas.height - 450);
                 
-                // Judul (Wrap Text)
+                // Judul (Wrap Text) - NAIK LAGI
                 ctx.fillStyle = "#fff";
                 ctx.font = "800 42px sans-serif";
-                wrapText(ctx, val('judul').toUpperCase(), 40, canvas.height - 300, 640, 50);
+                wrapText(ctx, val('judul').toUpperCase(), 40, canvas.height - 400, 640, 52);
 
-                // Harga
+                // Harga - NAIK LAGI
                 ctx.fillStyle = "#FFD900";
-                ctx.font = "900 56px sans-serif";
-                ctx.fillText("IDR " + val('hargaJual'), 40, canvas.height - 180);
+                ctx.font = "900 62px sans-serif";
+                ctx.fillText("IDR " + val('hargaJual'), 40, canvas.height - 190);
                 
-                // Icons (LT, LB, KT, KM)
-                drawSpecIcon(ctx, "📐 LT " + val('lt'), 40, canvas.height - 100);
-                drawSpecIcon(ctx, "🏠 LB " + val('lb'), 180, canvas.height - 100);
-                drawSpecIcon(ctx, "🛏️ " + val('kt'), 320, canvas.height - 100);
-                drawSpecIcon(ctx, "🚿 " + val('km'), 420, canvas.height - 100);
+                // --- ICONS (2 BARIS/ROWS) ---
+                ctx.shadowBlur = 0; 
+                ctx.shadowOffsetX = 0; 
+                ctx.shadowOffsetY = 0;
+
+                // ROW 1: LT, LB, KT, KM
+                let currentX = 40;
+                let iconY = canvas.height - 120; // Posisi Baris Atas
+
+                if(val('lt')) currentX += drawSpecIcon(ctx, "📐 LT " + val('lt'), currentX, iconY);
+                if(val('lb')) currentX += drawSpecIcon(ctx, "🏠 LB " + val('lb'), currentX, iconY);
+                if(val('kt')) currentX += drawSpecIcon(ctx, "🛏️ " + val('kt'), currentX, iconY);
+                if(val('km')) currentX += drawSpecIcon(ctx, "🚿 " + val('km'), currentX, iconY);
+
+                // ROW 2: Legal, Listrik, Air, Hadap/Carport
+                currentX = 40; // Reset X ke kiri
+                iconY = canvas.height - 60; // Posisi Baris Bawah
+
+                if(val('legal')) currentX += drawSpecIcon(ctx, "📜 " + val('legal'), currentX, iconY);
+                if(val('listrik')) currentX += drawSpecIcon(ctx, "⚡ " + val('listrik'), currentX, iconY);
+                if(val('air')) currentX += drawSpecIcon(ctx, "💧 " + val('air'), currentX, iconY);
+                if(val('hadap')) currentX += drawSpecIcon(ctx, "🧭 " + val('hadap'), currentX, iconY);
+                if(val('garasi')) currentX += drawSpecIcon(ctx, "🚗 " + val('garasi'), currentX, iconY);
+
 
                 // AGENT BADGE (Top Left)
                 if(logo.src) {
@@ -1698,11 +1753,13 @@
                 }
                 
                 // Agent Text
+                ctx.shadowColor = "rgba(0,0,0,0.8)";
+                ctx.shadowBlur = 5;
                 ctx.fillStyle = "#fff";
                 ctx.font = "bold 28px sans-serif";
                 ctx.fillText(val('nama'), 130, 65);
-                ctx.font = "20px sans-serif";
-                ctx.fillStyle = "#ccc";
+                ctx.font = "22px sans-serif";
+                ctx.fillStyle = "#FFD900";
                 ctx.fillText(val('hp'), 130, 95);
 
                 await new Promise(r => requestAnimationFrame(r));
@@ -1735,16 +1792,7 @@
         }
         ctx.fillText(line, x, y);
     }
-    
-    function drawSpecIcon(ctx, text, x, y) {
-        ctx.fillStyle = "rgba(255,255,255,0.2)";
-        ctx.roundRect(x, y - 30, 120, 45, 10); // Chrome supported
-        ctx.fill();
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 20px sans-serif";
-        ctx.fillText(text, x + 10, y);
-    }
-    
+
     // Polyfill roundRect simple
     CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
       if (w < 2 * r) r = w / 2;
